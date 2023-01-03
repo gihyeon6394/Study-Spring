@@ -1,8 +1,18 @@
 spring:
 
-#  db connection
+  #  db connection
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306?serverTimezone=Asia/Seoul
     username: root
     password: root
+
+mybatis:
+  configuration:
+    multiple-result-sets-enabled: false
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+    jdbc-type-for-null: varchar
+    default-fetch-size: 500
+  mapper-locations:
+    - classpath:/mapper/*.xml
