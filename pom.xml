@@ -69,6 +69,28 @@
             <version>2.3.0</version>
         </dependency>
 
+        <!--logging framework-->
+        <!--spring-boot 내부 logging 제외-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--lo4j2-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <!--logging framework (end)-->
+
     </dependencies>
 
 
