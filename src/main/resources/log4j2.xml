@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-    <Properties>
+    <!--<Properties>
         <Property name="logName">Log4j2TestProject</Property>
         <Property name="layoutPattern">[%d] %-5level [%thread] %C{100} %M - %msg%n</Property>
-    </Properties>
+    </Properties>-->
 
-    <!-- 콘솔, 파일에 찍을 때 형식 및 설정 셋팅-->
+    <!--console format-->
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d{HH:mm:ss.SSS}] %-5level [%thread] %C{100} %M - %msg%n"/>
@@ -13,17 +13,12 @@
     </Appenders>
 
     <Loggers>
-        <!-- =================================================================== -->
-        <!-- TESTPROJECT specific Logger setting								 -->
-        <!-- =================================================================== -->
+        <!--com.kghdev.* java source-->
         <logger name="com.kghdev" level="debug" additivity="false">
-            <AppenderRef ref="console"/> <!-- 콘솔에 로그 찍겠단 뜻 -->
+            <AppenderRef ref="console"/>
         </logger>
 
-
-        <!-- =================================================================== -->
-        <!-- SPRING																 -->
-        <!-- =================================================================== -->
+        <!--spring-->
         <logger name="org.springframework.core" level="debug" additivity="false">
             <AppenderRef ref="console"/>
 
@@ -47,6 +42,8 @@
         <Logger name="org.springframework.jdbc.datasource">
         <level value="DEBUG"/>
         </Logger>
+
+        <!--spring-->
 
         <Root level="all" additivity="false">
             <AppenderRef ref="console"/>
