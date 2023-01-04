@@ -6,5 +6,7 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface TransactionMapper {
-    void updt01();
+    void updt();
+
+    void updtA();
 }
