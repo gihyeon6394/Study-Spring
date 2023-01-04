@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
-
 @Service
 public class TransactionServiceTwo {
 
@@ -22,21 +20,21 @@ public class TransactionServiceTwo {
     }
 
 
-    @Transactional (propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updt06b() {
         transactionMapper.updtA();
 
         throw new RuntimeException();
     }
 
-    @Transactional (propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updt07a() {
         transactionMapper.updtA();
 
         throw new RuntimeException();
     }
 
-    @Transactional (propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updt08a() {
         transactionMapper.updtA();
     }

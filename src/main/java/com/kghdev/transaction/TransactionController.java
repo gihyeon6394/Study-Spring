@@ -7,17 +7,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
 
+/*
+*
+* @Transactional을 공부하기 위한 패키지
+* */
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
 
     @Autowired
     private TransactionService transactionService;
-
-    @Autowired
-    private TransactionServiceTwo transactionServiceTwo;
-
-
 
     @RequestMapping("/updtTest")
     @ResponseBody
@@ -31,7 +30,7 @@ public class TransactionController {
 //            transactionService.updt05();
 //            transactionService.updt06();
 //            transactionService.updt07();
-            transactionService.updt08();
+//            transactionService.updt08();
 
 //        } catch (Exception e) {
 //            throw new (e);
