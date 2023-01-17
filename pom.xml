@@ -82,6 +82,13 @@
             </exclusions>
         </dependency>
 
+        <!--slf4j interface-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.19.0</version>
+        </dependency>
+
         <!--lo4j2-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

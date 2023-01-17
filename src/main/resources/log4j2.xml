@@ -14,27 +14,27 @@
 
     <Loggers>
         <!--com.kghdev.* java source-->
-        <logger name="com.kghdev" level="debug" additivity="false">
+        <logger name="com.kghdev" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </logger>
 
         <!--spring-->
-        <logger name="org.springframework.core" level="debug" additivity="false">
+        <logger name="org.springframework.core" level="info" additivity="false">
             <AppenderRef ref="console"/>
 
         </logger>
 
-        <logger name="org.springframework.beans" level="debug" additivity="false">
+        <logger name="org.springframework.beans" level="info" additivity="false">
             <AppenderRef ref="console"/>
 
         </logger>
 
-        <logger name="org.springframework.context" level="debug" additivity="false">
+        <logger name="org.springframework.context" level="info" additivity="false">
             <AppenderRef ref="console"/>
 
         </logger>
 
-        <logger name="org.springframework.web" level="debug" additivity="false">
+        <logger name="org.springframework.web" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </logger>
 
@@ -45,7 +45,7 @@
 
         <!--spring-->
 
-        <Root level="all" additivity="false">
+        <Root level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
