@@ -1,5 +1,8 @@
 package com.kghdev.bean.vo;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Car {
 
     private String name;

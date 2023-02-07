@@ -1,5 +1,8 @@
 package com.kghdev.bean.vo;
 
+import org.springframework.stereotype.Component;
+
+
 public class Company {
 
     private String name;
