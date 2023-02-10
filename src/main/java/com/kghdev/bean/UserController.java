@@ -43,9 +43,9 @@ public class UserController {
     @RequestMapping("/tst2")
     @ResponseBody
     public void tst2()  {
-        UserRepository userRepository =  new UserRepository();
+//        UserRepository userRepository =  new UserRepository();
 //        UserService userService = new UserService(userRepository);
-        UserService userService = new UserService();
+//        UserService userService = new UserService();
 //        userService.getMember();
 
 
