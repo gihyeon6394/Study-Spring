@@ -3,11 +3,10 @@ package com.tob.part1.connectionMaker;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 /**
- * NAVER company connection maker
+ * DAUM company connection maker
  * */
-public class NConnectionMaker implements ConnectionMaker{
+public class DConnectionMaker implements ConnectionMaker{
     @Override
     public Connection makeConnection() throws ClassNotFoundException, SQLException {
 

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Bean scan 위한 class
+ * single tone object (bean)을 return
  * */
 @Configuration
 public class DaoFactorySpring {
