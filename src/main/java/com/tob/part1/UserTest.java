@@ -20,7 +20,7 @@ public class UserTest {
 
         // use obeject factory in spring
         ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
-        GoodDAO goodDAO2 = ac.getBean("goodDAO", GoodDAO.class);
+        GoodDAO goodDAO2 = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
 
         // single tone registry
         GoodDAO goodDAO4 = new DaoFactory().goodDAO();
