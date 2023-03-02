@@ -11,24 +11,24 @@ public class jsonTest {
          * Json Array 만들기
          * */
 
-        JSONObject jsonObj1 = new JSONObject();
-        jsonObj1.put("이름", "가나다");
-        jsonObj1.put("번호", "1");
+        JSONObject GANADA = new JSONObject();
+        GANADA.put("이름", "가나다");
+        GANADA.put("번호", "1");
 
-        JSONObject jsonObj2 = new JSONObject();
-        jsonObj2.put("이름", "라바사");
-        jsonObj2.put("번호", "2");
+        JSONObject RABASA = new JSONObject();
+        RABASA.put("이름", "라바사");
+        RABASA.put("번호", "2");
 
         JSONArray jsonArray =  new JSONArray();
-        jsonArray.put(jsonObj1);
-        jsonArray.put(jsonObj2);
+        jsonArray.put(GANADA);
+        jsonArray.put(RABASA);
 
         /**
          * Json Object 색출!
          * */
 
        for(int i = 0; i<jsonArray.length(); i++){
-           JSONObject jsonObject = jsonArray.getJSONObject(i); // jsonObject = jsonObject1
+           JSONObject jsonObject = jsonArray.getJSONObject(i); // jsonObject = GANADA
            String name = jsonObject.getString("이름"); //name = "가나다"
 
            if("가나다".equals(name)){
