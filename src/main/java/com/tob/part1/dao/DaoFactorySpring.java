@@ -4,6 +4,10 @@ import com.tob.part1.connectionMaker.ConnectionMaker;
 import com.tob.part1.connectionMaker.NConnectionMaker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+
+import javax.sql.DataSource;
+import javax.xml.crypto.Data;
 
 /**
  * Bean scan 위한 class
@@ -18,7 +22,8 @@ public class DaoFactorySpring {
      */
     @Bean
     public GoodDAO goodDAO() {
-        return new GoodDAO(connectionMaker());
+        // return new GoodDAO(connectionMaker());
+        return new GoodDAO(dataSource());
 
 
         /**
@@ -27,6 +32,16 @@ public class DaoFactorySpring {
 //        GoodDAO goodDAO = new GoodDAO();
 //        goodDAO.setConnectionMaker(connectionMaker());
 //        return  goodDAO;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+        dataSource.setDriverClass(com.mysql.cj.jdbc.Driver.class);
+        dataSource.setUrl("jdbc:mysql://localhost/tob");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        return dataSource;
     }
 
     //    @Bean

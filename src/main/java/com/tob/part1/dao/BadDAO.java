@@ -22,9 +22,8 @@ public class BadDAO {
         ResultSet rs = ps.executeQuery();
         rs.next();
         User user = new User();
-        user.setId(rs.getString("ID"));
+        user.setSeq(rs.getString("ID"));
         user.setName(rs.getString("NAME"));
-        user.setPwd(rs.getString("PWD"));
 
 //        4. close
         rs.close();

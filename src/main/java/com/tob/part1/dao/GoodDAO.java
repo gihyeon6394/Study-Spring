@@ -1,9 +1,9 @@
 package com.tob.part1.dao;
 
 import com.tob.part1.connectionMaker.ConnectionMaker;
-import com.tob.part1.connectionMaker.NConnectionMaker;
 import com.tob.part1.vo.User;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
 /**
@@ -18,6 +18,11 @@ public class GoodDAO {
      * 장점 : 실제 구현 객체는 용도 (배포 환경, 사용자 등)에 따라 object factory에서만 설정해주면 됨.
      * */
     private ConnectionMaker connectionMaker;
+
+    /**
+     * Database conenction 전문 인터페이스 사용
+     * */
+    private DataSource dataSource;
 
     public GoodDAO() {
 
@@ -35,6 +40,9 @@ public class GoodDAO {
         this.connectionMaker = connectionMaker;
     }
 
+    public GoodDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     /**
      * DI by Setter
@@ -43,7 +51,11 @@ public class GoodDAO {
         this.connectionMaker = connectionMaker;
     }
 
-    public User get(String id) throws ClassNotFoundException, SQLException {
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public User get(int id) throws ClassNotFoundException, SQLException {
         /**
          * 문제가 있는 DI
          * ConnectionMaker를 구현했지만, 실제 어떤 클래스 (NConnectionMaker)를 사용할 지 모델링 시점에 알아야함.
@@ -51,18 +63,19 @@ public class GoodDAO {
          * */
         // ConnectionMaker connectionMaker = new NConnectionMaker();
 
-        Connection c = connectionMaker.makeConnection();
+        // Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         // 2. sql result
-        PreparedStatement ps = c.prepareStatement("SELECT * FROM USER WHERE ID = ?");
+        PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE SEQ = ?");
+        ps.setInt(1, id);
 
         // 3. execute query
         ResultSet rs = ps.executeQuery();
         rs.next();
         User user = new User();
-        user.setId(rs.getString("ID"));
+        user.setSeq(rs.getString("SEQ"));
         user.setName(rs.getString("NAME"));
-        user.setPwd(rs.getString("PWD"));
 
         // 4. close
         rs.close();

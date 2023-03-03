@@ -2,26 +2,24 @@ package com.tob.part1.vo;
 
 public class User {
 
-    String id;
+    String seq;
     String name;
-    String pwd;
 
     public User() {
 
     }
 
-    public User(String id, String name, String pwd) {
-        this.id = id;
+    public User(String seq, String name) {
+        this.seq = seq;
         this.name = name;
-        this.pwd = pwd;
     }
 
-    public String getId() {
-        return id;
+    public String getSeq() {
+        return seq;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setSeq(String seq) {
+        this.seq = seq;
     }
 
     public String getName() {
@@ -32,11 +30,11 @@ public class User {
         this.name = name;
     }
 
-    public String getPwd() {
-        return pwd;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
+    @Override
+    public String toString() {
+        return "User{" +
+                "seq='" + seq + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
