@@ -29,18 +29,18 @@ public class UserTest {
 
         // single tone registry
         GoodDAO goodDAO4 = new DaoFactory().goodDAO();
-        System.out.println(goodDAO1.equals(goodDAO4)); //false
+//        System.out.println(goodDAO1.equals(goodDAO4)); //false
 
         GoodDAO goodDAO3 = ac.getBean("goodDAO", GoodDAO.class);
-        System.out.println(goodDAO2.equals(goodDAO3)); //true
+//        System.out.println(goodDAO2.equals(goodDAO3)); //true
 
         // config bean by .xml
-//        ApplicationContext acXML = new GenericXmlApplicationContext("applicationContext.xml");
-//        GoodDAO goodDAOXML = acXML.getBean("goodDAO", GoodDAO.class); //
-//        System.out.println(goodDAOXML.toString());
+        ApplicationContext acXML = new GenericXmlApplicationContext("applicationContext.xml");
+        GoodDAO goodDAOXML = acXML.getBean("goodDAO", GoodDAO.class); //
+        System.out.println(goodDAOXML.get(6).toString());
 
-        User user = goodDAO2.get(6);
-        System.out.println(user.toString());
+//        User user = goodDAO2.get(6);
+//        System.out.println(user.toString());
 
 
     }

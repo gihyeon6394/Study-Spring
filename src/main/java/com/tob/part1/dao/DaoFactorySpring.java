@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
 
 /**
  * Bean scan 위한 class
