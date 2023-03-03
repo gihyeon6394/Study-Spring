@@ -7,6 +7,8 @@ import com.tob.part1.dao.DaoFactorySpring;
 import com.tob.part1.dao.GoodDAO;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 public class UserTest {
     public static void main(String args[]) {
@@ -28,6 +30,12 @@ public class UserTest {
 
         GoodDAO goodDAO3 = ac.getBean("goodDAO", GoodDAO.class);
         System.out.println(goodDAO2.equals(goodDAO3)); //true
+
+        // config bean by .xml
+//        ApplicationContext acXML = new GenericXmlApplicationContext("com/tob/part1/applicationContext.xml");
+        ApplicationContext acXML = new GenericXmlApplicationContext("applicationContext.xml");
+        GoodDAO goodDAOXML = acXML.getBean("goodDAO", GoodDAO.class); //
+        System.out.println(goodDAOXML.toString());
 
 
     }
