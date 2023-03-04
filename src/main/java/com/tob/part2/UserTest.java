@@ -10,7 +10,13 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 import java.sql.SQLException;
-
+/**
+ * 단위 테스트 (테스트 코드 작성)를 하는 이유
+ * 1. 개발자가 만든 코드를 의도한대로 돌아가는지 가장 먼저 알아낸다
+ * 2. 자동수행 테스트 (테스트 클래스 등)는 나중 개선작업에도 소스 수정이 정상작동하는지 확인하는데 편리 (테스트 코드 돌리면 됨)
+ * 3. 객체지향적으로 설계가 가능 (테스트 코드를 반복해 가며 개선점이 보임)
+ *
+ * */
 public class UserTest {
     public static void main(String args[]) throws SQLException, ClassNotFoundException {
         ConnectionMaker connectionMaker = new NConnectionMaker();
