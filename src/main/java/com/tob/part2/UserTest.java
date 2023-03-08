@@ -5,10 +5,15 @@ import com.tob.part2.connectionMaker.NConnectionMaker;
 import com.tob.part2.dao.DaoFactorySpring;
 import com.tob.part2.dao.GoodDAO;
 import com.tob.part2.vo.User;
+import org.junit.Test;
+import org.junit.runner.JUnitCore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.SQLException;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * 단위 테스트 (테스트 코드 작성)를 하는 이유
@@ -23,13 +28,14 @@ import java.sql.SQLException;
  * main()을 활용한 test의 문제점
  * - 애플리케이션 규모가 커지면 테스트 개수 (main)가 많아짐
  * - 테스트를 수행하는 일이 점점 부담됨
- * => JUnit : 자바 단위테스트 지원도구
+ * - main이 테스트의 주도권을 가지고 있음
+ * => JUnit : 자바 단위테스트 지원도구 (Framework)
  */
 public class UserTest {
 
     // 문제점 2
     public static void main(String args[]) throws SQLException, ClassNotFoundException {
-        ConnectionMaker connectionMaker = new NConnectionMaker();
+       /* ConnectionMaker connectionMaker = new NConnectionMaker();
 
         // use obeject factory in spring
         ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
@@ -41,7 +47,22 @@ public class UserTest {
             System.out.println("failed");
         } else {
             System.out.println("success");
-        }
+        }*/
+        ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
+        GoodDAO goodDAO2 = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
+        User hani = goodDAO2.get(6);
+
+        JUnitCore.main("com.tob.part2.UserTest");
+    }
+
+    //JUnit 적용
+    @Test
+    public void tstGet() throws SQLException, ClassNotFoundException {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
+        GoodDAO goodDAO2 = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
+        User hani = goodDAO2.get(6);
+        assertThat(hani.getName(), is("팜하니"));
+
 
 
     }
