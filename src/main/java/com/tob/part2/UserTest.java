@@ -1,7 +1,5 @@
 package com.tob.part2;
 
-import com.tob.part2.connectionMaker.ConnectionMaker;
-import com.tob.part2.connectionMaker.NConnectionMaker;
 import com.tob.part2.dao.DaoFactorySpring;
 import com.tob.part2.dao.GoodDAO;
 import com.tob.part2.vo.User;
@@ -55,7 +53,11 @@ public class UserTest {
         JUnitCore.main("com.tob.part2.UserTest");
     }
 
-    //JUnit 적용
+    /**
+     * JUnit 적용
+     * 개발자의 경우 IDE로 테스트
+     * 소스 전체 테스트 (통합) : build tools (ex. maven)에 이식해서 test
+     * */
     @Test
     public void tstGet() throws SQLException, ClassNotFoundException {
         ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
