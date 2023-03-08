@@ -16,9 +16,15 @@ import java.sql.SQLException;
  * 2. 자동수행 테스트 (테스트 클래스 등)는 나중 개선작업에도 소스 수정이 정상작동하는지 확인하는데 편리 (테스트 코드 돌리면 됨)
  * 3. 객체지향적으로 설계가 가능 (테스트 코드를 반복해 가며 개선점이 보임)
  *
+ *
+ * UserTest의 문제점
+ * 1. 사람이 직접 test 결과를 확인해봐야함
+ * 2. UserTest.main() 을 계속해서 실행하면서 테스트해봐야함 (실행을 반복해야함)
  * */
 public class UserTest {
-    public static void main(String args[]) throws SQLException, ClassNotFoundException {
+
+    // 문제점 2
+    public static void mㄱain(String args[]) throws SQLException, ClassNotFoundException {
         ConnectionMaker connectionMaker = new NConnectionMaker();
 
         //use constructor
@@ -41,7 +47,7 @@ public class UserTest {
         // config bean by .xml
         ApplicationContext acXML = new GenericXmlApplicationContext("applicationContext.xml");
         GoodDAO goodDAOXML = acXML.getBean("goodDAO", GoodDAO.class); //
-        System.out.println(goodDAOXML.get(6).toString());
+        System.out.println(goodDAOXML.get(6).toString()); //문제점 1
 
 //        User user = goodDAO2.get(6);
 //        System.out.println(user.toString());
