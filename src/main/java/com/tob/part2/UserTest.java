@@ -24,7 +24,7 @@ import java.sql.SQLException;
 public class UserTest {
 
     // 문제점 2
-    public static void mㄱain(String args[]) throws SQLException, ClassNotFoundException {
+    public static void main(String args[]) throws SQLException, ClassNotFoundException {
         ConnectionMaker connectionMaker = new NConnectionMaker();
 
         //use constructor
