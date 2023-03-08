@@ -19,6 +19,11 @@ import java.sql.SQLException;
  * UserTest의 문제점
  * 1. 사람이 직접 test 결과를 확인해봐야함
  * 2. UserTest.main() 을 계속해서 실행하면서 테스트해봐야함 (실행을 반복해야함)
+ *
+ * main()을 활용한 test의 문제점
+ * - 애플리케이션 규모가 커지면 테스트 개수 (main)가 많아짐
+ * - 테스트를 수행하는 일이 점점 부담됨
+ * => JUnit : 자바 단위테스트 지원도구
  */
 public class UserTest {
 
@@ -31,7 +36,7 @@ public class UserTest {
         GoodDAO goodDAO2 = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
         User hani = goodDAO2.get(6);
 
-        //test 자동화
+        //test 검증의 자동화
         if (hani == null || !"팜하니".equals(hani.getName())) {
             System.out.println("failed");
         } else {
