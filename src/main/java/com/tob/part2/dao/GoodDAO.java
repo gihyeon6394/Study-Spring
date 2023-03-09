@@ -2,12 +2,17 @@ package com.tob.part2.dao;
 
 import com.tob.part2.connectionMaker.ConnectionMaker;
 import com.tob.part2.vo.User;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.util.CollectionUtils;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 초난감 DAO 개선
@@ -58,20 +63,13 @@ public class GoodDAO {
         this.dataSource = dataSource;
     }
 
-    public User get(int id) throws ClassNotFoundException, SQLException {
-        /**
-         * 문제가 있는 DI
-         * ConnectionMaker를 구현했지만, 실제 어떤 클래스 (NConnectionMaker)를 사용할 지 모델링 시점에 알아야함.
-         *
-         * */
-        // ConnectionMaker connectionMaker = new NConnectionMaker();
+    public User getUserByName(String name) throws ClassNotFoundException, SQLException {
 
-        // Connection c = connectionMaker.makeConnection();
         Connection c = dataSource.getConnection();
 
         // 2. sql result
-        PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE SEQ = ?");
-        ps.setInt(1, id);
+        PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE NAME = ?");
+        ps.setString(1, name);
 
         // 3. execute query
         ResultSet rs = ps.executeQuery();
@@ -88,4 +86,41 @@ public class GoodDAO {
         return user;
     }
 
+    public List<User> getUsersByNameGroup(String nameGroup) throws SQLException {
+        Connection c = dataSource.getConnection();
+
+        // 2. sql result
+        PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE NAME_GROUP = ?");
+        ps.setString(1, nameGroup);
+
+        // 3. execute query
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+
+        List<User> userList = new ArrayList<>();
+        while (rs.next()) {
+
+
+            User user = new User();
+            user.setSeq(rs.getString("SEQ"));
+            user.setName(rs.getString("NAME"));
+            user.setNameGroup(rs.getString("NAME_GROUP"));
+
+
+            userList.add(user);
+        }
+
+        // 4. close
+        rs.close();
+        ps.close();
+        c.close();
+
+
+        if(CollectionUtils.isEmpty(userList)){
+            throw new EmptyResultDataAccessException(1);
+            //TODO : when list is empty
+        }
+
+        return userList;
+    }
 }

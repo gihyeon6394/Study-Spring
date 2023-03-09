@@ -5,13 +5,16 @@ public class User {
     String seq;
     String name;
 
+    String nameGroup;
+
     public User() {
 
     }
 
-    public User(String seq, String name) {
+    public User(String seq, String name, String nameGroup) {
         this.seq = seq;
         this.name = name;
+        this.nameGroup = nameGroup;
     }
 
     public String getSeq() {
@@ -28,6 +31,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNameGroup() {
+        return nameGroup;
+    }
+
+    public void setNameGroup(String nameGroup) {
+        this.nameGroup = nameGroup;
     }
 
     @Override
