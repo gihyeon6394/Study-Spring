@@ -34,6 +34,10 @@ import org.springframework.context.annotation.Configuration;
  * Batch Core : Batch 작업을 시작 / 제어하는데 필요한 핵심 런타임 클래스
  * Batch Infrastructure : 개발자가와 어플리케이션이 사용하는 일반적인 Reader, Writer, RetryTemplate과 같은 서비스
  * JobRepository : 배치 수행과 관련된 수치 데이터, 잡의 상태 유지 관리
+ * Job : 1개 이상의 Step을 포함하는 컨테이너, 배치 처리과정을 하나의 단위로 표현한 객체
+ * JobLauncher : Job을 실행함. Job 재실행 가능 여부 검증, 실행 방법, 파라미터 유효성 검증 등 수행. Job을 실행하면 Job이 각 Step을 실행
+ * Step : 가장 일반적인 상태를 보여주는 단위. Job을 구성하는 독립적인 작업 단위
+ * Tasklet : Stpe이 중지될 때까지 execute메서드가 반복해서 수행
  *
  * Spring Batch 메타 테이블 BATCH_JOB_INSTANCE
  * Caused by: org.springframework.jdbc.UncategorizedSQLException: PreparedStatementCallback; ...
