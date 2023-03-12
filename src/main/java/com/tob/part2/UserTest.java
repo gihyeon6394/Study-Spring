@@ -51,7 +51,7 @@ public class UserTest {
      * @After도 마찬가지
      * */
     @Before
-    public void setp(){
+    public void step(){
         ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
         goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
     }
