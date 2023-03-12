@@ -5,10 +5,16 @@ import com.tob.part2.dao.GoodDAO;
 import com.tob.part2.vo.User;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -33,12 +39,23 @@ import static org.junit.Assert.assertThat;
  * - main이 테스트의 주도권을 가지고 있음
  * => JUnit : 자바 단위테스트 지원도구 (Framework)
  */
+
+//@RunWith(SpringRunner.class) //Junit4
+//@ExtendWith({SpringExtension.class}) //spring test framework : spring이 junit framework를 이용하는 확장기능
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = DaoFactorySpring.class) //spring test framework : spring이 junit framework를 이용하는 확장기능
+//    @ContextConfiguration(classes = DaoFactorySpring.class) // application context 설정 위치
 public class UserTest {
 
     /**
      * Fixture : 테스트에 필요한 object, info
-     * */
-    private  GoodDAO goodDAO;
+     */
+    private GoodDAO goodDAO;
+
+    @Autowired
+    private ApplicationContext ac;
+
+
     public static void main(String args[]) throws SQLException, ClassNotFoundException {
 
         JUnitCore.main("com.tob.part2.UserTest");
@@ -49,11 +66,22 @@ public class UserTest {
      * @Test가 3개면 @Before 3번
      * Before -> Test -> After -> Before -> Test -> After -> ...
      * @After도 마찬가지
-     * */
+     */
     @Before
-    public void step(){
-        ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
-        goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
+    public void beforeTest() {
+
+        /**
+         * ApplicationContext을 자주 초기화하면 성능 저하
+         *
+         * - ApplicationContext를 생성 (new)할 떄 모든 Bean을 초기화함 -> 리소스 낭비
+         * - 특정 Bean은 초기화 할떄 새로운 thread를 열 가능성도 있음
+         *
+         * 해결방안
+         * @BeforeClass static method 사용 or
+         * */
+//        ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
+//        goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
+        goodDAO = this.ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
     }
 
     /**
@@ -87,10 +115,10 @@ public class UserTest {
 
     /**
      * TDD
-     *
+     * <p>
      * 1. 알 수 없는 그룹 호출하는 테스트 코드 작성
      * 2. 알 수 없는 그룹 호출하는 테스크 코드를 성공하게 하는 코드 작성
-     *
+     * <p>
      * 예제
      * 1. expected in test code
      * 2. throw exception in code
