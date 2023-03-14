@@ -20,6 +20,7 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 단위 테스트 (테스트 코드 작성)를 하는 이유
@@ -60,7 +61,9 @@ public class UserTest {
     @Autowired
     private ApplicationContext ac;
 
-    static Set<UserTest> setUserTest = new HashSet<>();
+    static Set<UserTest> setUserTest = new HashSet<>(); //매번 새로운 test object를 만드는가?
+
+    static  ApplicationContext applicationContext = null; //주입받은 하나의 context만 사용하는가?
 
 
     public static void main(String args[]) throws SQLException, ClassNotFoundException {
@@ -120,6 +123,8 @@ public class UserTest {
         assertThat(setUserTest, not(hasItem(this))); //매번 새로운 test object를 만드는가?
         setUserTest.add(this);
 
+        assertThat(applicationContext == null || applicationContext == this.ac, is(true));
+        applicationContext = this.ac;
     }
 
     //뉴진스 멤버가 있는지?
@@ -131,8 +136,12 @@ public class UserTest {
         assertThat(userList.size(), greaterThan(0));
 
 
-        assertThat(setUserTest, not(hasItem(this))); //매번 새로운 test object를 만드는가?
+        assertThat(setUserTest, not(hasItem(this)));
         setUserTest.add(this);
+
+
+        assertThat(applicationContext, either(is(nullValue())).or(is(this.ac)));
+        applicationContext = this.ac;
     }
 
 
@@ -146,6 +155,10 @@ public class UserTest {
 
         assertThat(setUserTest, not(hasItem(this))); //매번 새로운 test object를 만드는가?
         setUserTest.add(this);
+
+        assertTrue(applicationContext == null || applicationContext == this.ac);
+        applicationContext = this.ac;
+
 
     }
 
