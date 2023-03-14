@@ -5,15 +5,14 @@ import com.tob.part2.dao.GoodDAO;
 import com.tob.part2.vo.User;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.SQLException;
@@ -22,6 +21,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 /**
  * 단위 테스트 (테스트 코드 작성)를 하는 이유
@@ -39,12 +39,19 @@ import static org.junit.Assert.assertThat;
  * - main이 테스트의 주도권을 가지고 있음
  * => JUnit : 자바 단위테스트 지원도구 (Framework)
  */
+@RunWith(SpringRunner.class) // JUnit framework의 테스트 실행방법 확장
 
-//@RunWith(SpringRunner.class) //Junit4
-//@ExtendWith({SpringExtension.class}) //spring test framework : spring이 junit framework를 이용하는 확장기능
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = DaoFactorySpring.class) //spring test framework : spring이 junit framework를 이용하는 확장기능
-//    @ContextConfiguration(classes = DaoFactorySpring.class) // application context 설정 위치
+//spring test framework, classes : ApplicationContext config 위치 지정
+// method-level, class-level 에서도 컨텍스트를 공유할 수 있음 (= test class가 달라도 같은 ApplicationContext 설정 위치를 지정하면, 모두 같은 ApplicationContext 사용)
+@SpringBootTest(classes = DaoFactorySpring.class)
+
+/**
+ * test method 에서 ApplicationConext 구성 (bean 간의 의존 등)을 수정하겠다는 것을 test framwork에게 명시
+ * class-level, method-level 가능
+ * 클래스 레벨일 경우 해당 클래스에서 ApplcationContext 공유 안됨 (=> 테스트 메서드들끼리 영향을 주지 못하도록)
+ * 메서드 레벨일 경우 해당 메서드에 대해서만 ApplcationContext 새롭게 생성, 해당 메서드가 끝나면 다시 새로운 Context 생성
+ * */
+//@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class UserTest {
 
     /**
@@ -77,11 +84,20 @@ public class UserTest {
          * - 특정 Bean은 초기화 할떄 새로운 thread를 열 가능성도 있음
          *
          * 해결방안
-         * @BeforeClass static method 사용 or
+         * - @BeforeClass static method 사용
+         * - SrpingBootTest framework를 이용하여 테스트 시 최초에 한번 의존성 주입
          * */
 //        ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
 //        goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
         goodDAO = this.ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
+
+        /**
+         * DI by test Code
+         * - 필요에 따라 테스트 케이스에 부합하는 의존관계를 설정해줄 수 있음
+         * - 주의해서 할 것
+         * */
+//        goodDAO.setDataSource("....");
+
     }
 
     /**
@@ -100,6 +116,7 @@ public class UserTest {
         // GoodDAO goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
         User hani = goodDAO.getUserByName("팜하니");
         assertThat(hani.getName(), is("팜하니"));
+        System.out.println("existHani : "+ this.ac.toString());
 
     }
 
@@ -110,6 +127,20 @@ public class UserTest {
         // GoodDAO goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
         List<User> userList = goodDAO.getUsersByNameGroup("뉴진스");
         assertThat(userList.size(), greaterThan(0));
+        System.out.println("existNewJeans : "+this.ac.toString());
+
+    }
+
+
+    //뉴진스 멤버가 있는지?
+    @Test
+    public void existNewJeans2() throws SQLException, ClassNotFoundException {
+        // ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
+        // GoodDAO goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
+        List<User> userList = goodDAO.getUsersByNameGroup("뉴진스");
+        assertThat(userList.size(), greaterThan(0));
+        System.out.println("existNewJeans2 : "+ this.ac.toString());
+
 
     }
 
@@ -127,6 +158,7 @@ public class UserTest {
     public void existIVE() throws SQLException, ClassNotFoundException {
         // ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
         // GoodDAO goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
+        System.out.println("existIVE : "+ this.ac.toString());
         goodDAO.getUsersByNameGroup("아이브");
 
     }
