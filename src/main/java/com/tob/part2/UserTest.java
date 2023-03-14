@@ -14,10 +14,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -58,6 +59,8 @@ public class UserTest {
 
     @Autowired
     private ApplicationContext ac;
+
+    static Set<UserTest> setUserTest = new HashSet<>();
 
 
     public static void main(String args[]) throws SQLException, ClassNotFoundException {
@@ -113,7 +116,9 @@ public class UserTest {
         // GoodDAO goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
         User hani = goodDAO.getUserByName("팜하니");
         assertThat(hani.getName(), is("팜하니"));
-        System.out.println("existHani : "+ this.ac.toString());
+
+        assertThat(setUserTest, not(hasItem(this))); //매번 새로운 test object를 만드는가?
+        setUserTest.add(this);
 
     }
 
@@ -124,8 +129,10 @@ public class UserTest {
         // GoodDAO goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
         List<User> userList = goodDAO.getUsersByNameGroup("뉴진스");
         assertThat(userList.size(), greaterThan(0));
-        System.out.println("existNewJeans : "+this.ac.toString());
 
+
+        assertThat(setUserTest, not(hasItem(this))); //매번 새로운 test object를 만드는가?
+        setUserTest.add(this);
     }
 
 
@@ -136,8 +143,9 @@ public class UserTest {
         // GoodDAO goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
         List<User> userList = goodDAO.getUsersByNameGroup("뉴진스");
         assertThat(userList.size(), greaterThan(0));
-        System.out.println("existNewJeans2 : "+ this.ac.toString());
 
+        assertThat(setUserTest, not(hasItem(this))); //매번 새로운 test object를 만드는가?
+        setUserTest.add(this);
 
     }
 
@@ -155,8 +163,10 @@ public class UserTest {
     public void existIVE() throws SQLException, ClassNotFoundException {
         // ApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactorySpring.class);
         // GoodDAO goodDAO = ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
-        System.out.println("existIVE : "+ this.ac.toString());
+
         goodDAO.getUsersByNameGroup("아이브");
 
+        assertThat(setUserTest, not(hasItem(this))); //매번 새로운 test object를 만드는가?
+        setUserTest.add(this);
     }
 }
