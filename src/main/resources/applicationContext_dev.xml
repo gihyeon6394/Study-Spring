@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--spring bean 설정을 xml로 하기 위함-->
+<!--
+bean 설정을 xml로 하는 것의 장점
+1. 가독성
+2. compile / build 필요 없음
+3. java code 에서 bean 설정 (의존관계 포함)하는 것은 어색함
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost/tob"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+
+
+    <!--여러개의 구현 클래스르 나열-->
+    <bean id="nConnectionMaker" class="com.tob.part1.connectionMaker.NConnectionMaker"/>
+    <bean id="dConnectionMaker" class="com.tob.part1.connectionMaker.DConnectionMaker"/>
+
+    <bean id="goodDAO" class="com.tob.part1.dao.GoodDAO">
+        <!--의존성 주입 객체는 서버 환경에 따라 갈아 교체 가능-->
+<!--        <property name="connectionMaker" ref="nConnectionMaker"/>-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>
