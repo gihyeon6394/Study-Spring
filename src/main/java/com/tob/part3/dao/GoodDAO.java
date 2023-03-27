@@ -234,9 +234,8 @@ public class GoodDAO extends GoodDAOSuper {
         try {
             c = dataSource.getConnection();
 
-            PsStrategy psStrategy = new PsStrategyForMe();
+            PsStrategy psStrategy = new PsStrategyForMe(name);
             ps = psStrategy.getPsForSelect(c);
-            ps.setString(1, name);
 
             rs = ps.executeQuery();
             rs.next();
@@ -279,7 +278,7 @@ public class GoodDAO extends GoodDAOSuper {
     }
 
     /**
-     * solution 4 (best) : DI를 적용한 컨텍스트 (변하지 않는)와 클라이언트 분리
+     * solution 4 : DI를 적용한 컨텍스트 (변하지 않는)와 클라이언트 분리
      * "client" : 사용자, 어떤 전략 (변하는, b)을 사용할지 본인이 정할 수 있음
      * <p>
      * 장점 :  contextWithStrategy()를 다른 DAO 의 메서드들도 사용이 가능함
@@ -289,12 +288,12 @@ public class GoodDAO extends GoodDAOSuper {
      */
 
     public User getUserByName4(String name) {
-        PsStrategy psStrategy = new PsStrategyForMe(); //client가 직접 구현체를 정의
-        User user = contextWithStrategy(psStrategy, name);
+        PsStrategy psStrategy = new PsStrategyForMe(name); //client가 직접 구현체를 정의
+        User user = contextWithStrategy(psStrategy);
         return user;
     }
 
-    private User contextWithStrategy(PsStrategy psStrategy, String name) {
+    private User contextWithStrategy(PsStrategy psStrategy) {
         Connection c = null;
         com.tob.part3.vo.User user;
         ResultSet rs = null;
@@ -303,7 +302,6 @@ public class GoodDAO extends GoodDAOSuper {
             c = dataSource.getConnection();
 
             ps = psStrategy.getPsForSelect(c);
-            ps.setString(1, name);
 
             rs = ps.executeQuery();
             rs.next();
@@ -344,6 +342,64 @@ public class GoodDAO extends GoodDAOSuper {
 
         return user;
     }
+
+    /**
+     * solution 5 : 내부클래스를 선언해서 쿼리마다 클래스를 파일로서 만들 필요를 제거
+     *
+     * */
+
+    public User getUserByName5(String name) {
+
+        class PsStrategyForMe implements PsStrategy{
+
+            String name;
+
+            public PsStrategyForMe(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public PreparedStatement getPsForSelect(Connection c) throws SQLException {
+                PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE NAME = ?");
+                ps.setString(1, name);
+                return ps;
+            }
+        }
+
+
+
+
+        PsStrategy psStrategy = new PsStrategyForMe(name); //client가 직접 구현체를 정의
+        User user = contextWithStrategy(psStrategy);
+        return user;
+    }
+
+    /**
+     * solution 6 : 익명 내부 클래스르 이용한 '전략'과 '클라이언트'의 동거
+     *
+     * 익명 내부 클래스 (anonymous inner class)
+     *
+     * 이름을 갖지 않는 클래스이다. 클래스 선언과 오브잭트 생성이 동시에 일어남.
+     * 상속할 클래스, 구현 클래스를 생성자 대신 선언과 동시에 생성해서 사용하게 한다.
+     * 구현체를 재사용할 필요가 없을때 유용하다.
+     * */
+
+    public User getUserByName6(String name) {
+
+        //TODO : Anonymous new PsStrategy() can be replaced with lambda
+        PsStrategy psStrategy = new PsStrategy(){
+
+            @Override
+            public PreparedStatement getPsForSelect(Connection c) throws SQLException {
+                PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE NAME = ?");
+                ps.setString(1, name);
+                return ps;
+            }
+        };
+        User user = contextWithStrategy(psStrategy);
+        return user;
+    }
+
 
 
 }
