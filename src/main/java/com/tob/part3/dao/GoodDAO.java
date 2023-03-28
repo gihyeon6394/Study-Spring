@@ -46,6 +46,19 @@ public class GoodDAO extends GoodDAOSuper {
     }
 
     public void setDataSource(DataSource dataSource) {
+        /**
+         * JdbcContext를 bean으로서 DI하지 않고, 직접 setter 메서드에서 주입하는 방법이 있다.
+         * 빈 DI 설정 파일에서 dataSource를 주입할때 setDataSource에 아래와 같이 생성하는 방법.
+         * 따라서 2가지 방법이 있다.
+         *
+         * 1. 빈으로서 DI
+         * 2. setter에서 코드로서 DI
+         *
+         * 1번은 의존성 주입을 외부에 둔것에 여전히 의의가 있다. 의존관계가 명확하게 외부에 드러난다. 싱글톤으로 만들 수 있다.
+         * 2번은 의존 관계를 전략적으로 감출 수 있으나. 싱글톤으로 만들 수는 없다. 상대적으로 1번에 비해 더 강한 응집도를 표현한다
+         * */
+
+        // this.jdbcContext = new JdbcContext();
         this.dataSource = dataSource;
     }
 
