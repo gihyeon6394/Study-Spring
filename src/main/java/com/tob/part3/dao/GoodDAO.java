@@ -26,6 +26,8 @@ public class GoodDAO extends GoodDAOSuper {
 
     private DataSource dataSource;
 
+    private  JdbcContext jdbcContext;
+
     public GoodDAO() {
 //        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(DaoFactory.class);
 //        this.connectionMaker = ac.getBean("connectionMaker", ConnectionMaker.class);
@@ -47,6 +49,9 @@ public class GoodDAO extends GoodDAOSuper {
         this.dataSource = dataSource;
     }
 
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
+    }
 
     public com.tob.part3.vo.User getUserByName(String name) /*throws ClassNotFoundException, SQLException*/ {
 
@@ -293,6 +298,11 @@ public class GoodDAO extends GoodDAOSuper {
         return user;
     }
 
+
+    /**
+     * 문제점 : contextWithStrategy는 다른 DAO들도 사용 가능해야함.
+     * solution : 클래스로 분리하자
+     * */
     private User contextWithStrategy(PsStrategy psStrategy) {
         Connection c = null;
         com.tob.part3.vo.User user;
@@ -400,6 +410,23 @@ public class GoodDAO extends GoodDAOSuper {
         return user;
     }
 
+
+
+    /**
+     * 문제점 : contextWithStrategy() 는 다른 DAO들도 사용 가능해야함.
+     * solution : 클래스로 분리하자
+     * jdbContext는 스프링 빈 설정에서 주입받을 수 있게 한다.
+     * */
+    public User getUserByName7(String name) {
+       return  jdbcContext.contextWithStrategy(new PsStrategy() {
+           @Override
+           public PreparedStatement getPsForSelect(Connection c) throws SQLException {
+               PreparedStatement ps = c.prepareStatement("SELECT * FROM TB_USER WHERE NAME = ?");
+               ps.setString(1, name);
+               return ps;
+           }
+       });
+    }
 
 
 }

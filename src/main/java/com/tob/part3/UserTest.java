@@ -1,6 +1,5 @@
 package com.tob.part3;
 
-import com.tob.part3.dao.DaoFactorySpring;
 import com.tob.part3.dao.GoodDAO;
 import com.tob.part3.vo.User;
 import org.junit.Before;
@@ -10,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.SQLException;
@@ -20,8 +20,8 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DaoFactorySpring.class)
-
+@SpringBootTest(/*classes = DaoFactorySpring.class*/)
+@ContextConfiguration("/applicationContext.xml")
 public class UserTest {
     private GoodDAO goodDAO;
 
@@ -39,7 +39,7 @@ public class UserTest {
     }
     @Before
     public void beforeTest() {
-        goodDAO = this.ac.getBean("goodDAO", GoodDAO.class); // getBean() : Dependency lookup
+        goodDAO = this.ac.getBean("goodDAO3", GoodDAO.class); // getBean() : Dependency lookup
 
     }
 
@@ -47,7 +47,7 @@ public class UserTest {
     @Test
     public void existHani() throws SQLException, ClassNotFoundException {
 
-        User hani = goodDAO.getUserByName6("팜하니");
+        User hani = goodDAO.getUserByName7("팜하니");
         assertThat(hani.getName(), is("팜하니"));
 
     }

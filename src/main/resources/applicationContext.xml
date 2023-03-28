@@ -27,4 +27,14 @@ bean 설정을 xml로 하는 것의 장점
 <!--        <property name="connectionMaker" ref="nConnectionMaker"/>-->
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <bean id="jdbcContext" class="com.tob.part3.dao.JdbcContext">
+        <property name="dataSource" ref="dataSource"/>
+
+    </bean>
+
+    <bean id="goodDAO3" class="com.tob.part3.dao.GoodDAO">
+        <property name="jdbcContext" ref="jdbcContext"/>
+    </bean>
+
 </beans>
