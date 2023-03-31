@@ -426,11 +426,24 @@ public class GoodDAO extends GoodDAOSuper {
 
 
     /**
-     * 문제점 : contextWithStrategy() 는 다른 DAO들도 사용 가능해야함.
+     * getUserByName6() 문제점 : contextWithStrategy() 는 다른 DAO들도 사용 가능해야함.
      * solution : 클래스로 분리하자
      * jdbContext는 스프링 빈 설정에서 주입받을 수 있게 한다.
+     *
+     *
+     * 템플릿/콜백 패턴 : 템플릿에 사용할 전략을 콜백으로 전달
+     * 템플릿 : 변하지 않고, 공통으로 사용하는 것 {@link JdbcContext}
+     * 콜백 : 템플릿에서 실행할 함수 PsStrategy
+     * 콜백은 일반적으로 익명 내부클래스로 만들어서 전달
+     *
+     * 전략패턴의 장점 (변하는 것과 변하지 않는 것의 분리)만 차용하여 간결하게 전략을 콜백으로서 전달하게 했다.
+     *
      * */
     public User getUserByName7(String name) {
+
+        /**
+         * PsStrategy를 익명 클래스로 만들어 callback으로 전달
+         * */
        return  jdbcContext.contextWithStrategy(new PsStrategy() {
            @Override
            public PreparedStatement getPsForSelect(Connection c) throws SQLException {
@@ -439,6 +452,30 @@ public class GoodDAO extends GoodDAOSuper {
                return ps;
            }
        });
+    }
+
+
+    /**
+     * getUserByName7() 문제점 : 콜백이 다른 메서드들에서도 반복될 것 같음
+     * 반복 내용 :  PreparedStatement을 만들어서 반환
+     * 전략 내용 : sql, 파라미터 바인딩
+     *
+     * solution : 반복내용을 다시 분리해보자
+     * */
+    public User getUserByName8(String name) {
+
+        return executeSQL("SELECT * FROM TB_USER WHERE NAME = ?", name);
+    }
+
+    private User executeSQL(String sql, String name) {
+        return  jdbcContext.contextWithStrategy(new PsStrategy() {
+            @Override
+            public PreparedStatement getPsForSelect(Connection c) throws SQLException {
+                PreparedStatement ps = c.prepareStatement(sql);
+                ps.setString(1, name);
+                return ps;
+            }
+        });
     }
 
 

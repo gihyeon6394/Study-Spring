@@ -47,7 +47,7 @@ public class UserTest {
     @Test
     public void existHani() throws SQLException, ClassNotFoundException {
 
-        User hani = goodDAO.getUserByName7("팜하니");
+        User hani = goodDAO.getUserByName8("팜하니");
         assertThat(hani.getName(), is("팜하니"));
 
     }

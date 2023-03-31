@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 /**
+ * "템플릿"
+ *
  * 스프링 DI는 인터페이스를 사이에 두고 인터페이스의 구현체를 런타임에서 주입해서 사용하는 것이 일반적이나,
  * JdbcContext는 인터페이스일 필요가 없다.
  * 왜냐면 기능이 바뀌는 내용이 아니니까. 즉, 확장성을 고려해서 인터페이스로 설계한뒤 구현체로 상세 구현할 필요가 없으니까
