@@ -1,5 +1,5 @@
 
-spring boot framework 위에서 배운 것들의 TIL 저장소입니다.  
+spring(boot) framework 의 TIL 저장소입니다.  
   
 <h2>Reference</h2>
 
