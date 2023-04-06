@@ -457,17 +457,25 @@ public class GoodDAO extends GoodDAOSuper {
 
     /**
      * getUserByName7() 문제점 : 콜백이 다른 메서드들에서도 반복될 것 같음
-     * 반복 내용 :  PreparedStatement을 만들어서 반환
+     * 반복 내용 :  PreparedStatement을 만들어서 반환 (익명 내부 클래스)
      * 전략 내용 : sql, 파라미터 바인딩
      *
      * solution : 반복내용을 다시 분리해보자
      * */
+
+    //TODO : name과 같은 파라미터의 개수는 정해져있지 않으니, 가변인자 (varargs)로 개선해보자.
     public User getUserByName8(String name) {
 
-        return executeSQL("SELECT * FROM TB_USER WHERE NAME = ?", name);
+//        return executeSQL("SELECT * FROM TB_USER WHERE NAME = ?", name);
+        return jdbcContext.executeSQL("SELECT * FROM TB_USER WHERE NAME = ?", name);
     }
 
-    private User executeSQL(String sql, String name) {
+    /**
+     *
+     * 개선점 : executeSQL은 여기서만 쓰일 것 같지 않음. 모든 DAO에서 쓸거 같은데?
+     * soulution : template ({@link JdbcContext}로 옮기자
+     * */
+   /* private User executeSQL(String sql, String name) {
         return  jdbcContext.contextWithStrategy(new PsStrategy() {
             @Override
             public PreparedStatement getPsForSelect(Connection c) throws SQLException {
@@ -476,7 +484,7 @@ public class GoodDAO extends GoodDAOSuper {
                 return ps;
             }
         });
-    }
+    }*/
 
 
 }

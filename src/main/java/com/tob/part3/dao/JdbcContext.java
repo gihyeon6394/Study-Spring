@@ -77,4 +77,17 @@ public class JdbcContext {
         return user;
     }
 
+
+
+    public User executeSQL(String sql, String name) {
+        return  contextWithStrategy(new PsStrategy() {
+            @Override
+            public PreparedStatement getPsForSelect(Connection c) throws SQLException {
+                PreparedStatement ps = c.prepareStatement(sql);
+                ps.setString(1, name);
+                return ps;
+            }
+        });
+    }
+
 }
