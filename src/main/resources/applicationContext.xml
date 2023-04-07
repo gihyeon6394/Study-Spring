@@ -37,5 +37,10 @@ bean 설정을 xml로 하는 것의 장점
         <property name="jdbcContext" ref="jdbcContext"/>
     </bean>
 
+    <bean id="jdbcTemplateDAO" class="com.tob.part3.dao.JDBCTemplateDAO">
+        <!--<property name="jdbcTemplate" value="org.springframework.jdbc.core.JdbcTemplate"/>-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
 
 </beans>
