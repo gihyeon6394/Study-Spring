@@ -78,9 +78,9 @@ public class UserTest {
     @Test
     public void selectByName() throws SQLException, ClassNotFoundException {
         // int cnt = jdbcTemplateDAO.countAll1();
-        User user = jdbcTemplateDAO.selectByName("해린");
+        User user = jdbcTemplateDAO.selectByName("강해린");
         assertNotNull(user);
-        assertThat(user.getName(), is("해린"));
+        assertThat(user.getName(), is("강해린"));
     }
 
     /**
@@ -130,7 +130,9 @@ public class UserTest {
      * 로드 존슨 (스프링 개발자)는 테스트 작성 시 negative test를 먼저 작성한다.
      * */
 
-   /* @Test
+    //TODO : 전체 지우는 것도 Test로 살리기
+
+    /*@Test
     public void deleteThenCnt() {
         jdbcTemplateDAO.deleteAll();
         List<User> userList = jdbcTemplateDAO.selectAll();
