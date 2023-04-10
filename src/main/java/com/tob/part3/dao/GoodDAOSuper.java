@@ -33,7 +33,7 @@ public abstract class GoodDAOSuper {
             rs = ps.executeQuery();
             rs.next();
             user = new com.tob.part3.vo.User();
-            user.setSeq(rs.getString("SEQ"));
+            user.setSeq(rs.getInt("SEQ"));
             user.setName(rs.getString("NAME"));
 
 

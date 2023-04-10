@@ -2,7 +2,7 @@ package com.tob.part3.vo;
 
 public class User {
 
-    String seq;
+    int seq;
     String name;
 
     String nameGroup;
@@ -11,17 +11,17 @@ public class User {
 
     }
 
-    public User(String seq, String name, String nameGroup) {
+    public User(int seq, String name, String nameGroup) {
         this.seq = seq;
         this.name = name;
         this.nameGroup = nameGroup;
     }
 
-    public String getSeq() {
+    public int getSeq() {
         return seq;
     }
 
-    public void setSeq(String seq) {
+    public void setSeq(int seq) {
         this.seq = seq;
     }
 

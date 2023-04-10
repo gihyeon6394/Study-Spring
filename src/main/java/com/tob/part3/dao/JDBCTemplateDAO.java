@@ -1,9 +1,17 @@
 package com.tob.part3.dao;
 
 import com.tob.part3.vo.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 /**
@@ -33,7 +41,6 @@ public class JDBCTemplateDAO {
 //    }
 
 
-
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.dataSource = dataSource;
@@ -52,5 +59,44 @@ public class JDBCTemplateDAO {
                 "values (?, now(), ?);", user.getName(), user.getNameGroup());
     }
 
+    public int countAll1() {
+        /**
+         * 문제점 : 너무 복잡함
+         * solution : jdbcTemplate.queryForObject() 이용
+         * */
+        return this.jdbcTemplate.query(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                return connection.prepareStatement("select count(*) from tb_user;");
+            }
+        }, new ResultSetExtractor<Integer>() {
+            @Override
+            public Integer extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+                resultSet.next();
+                return resultSet.getInt(1);
+            }
+        });
+    }
 
+
+    public int countAll2() {
+
+        return this.jdbcTemplate.queryForObject("select count(*) from tb_user;", Integer.class);
+
+
+    }
+
+    public User selectByName(String name) {
+        return this.jdbcTemplate.queryForObject("select * from tb_user where name=? ;", new Object[]{name}, new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet resultSet, int i) throws SQLException {
+                User user = new User();
+                user.setName(resultSet.getString("name"));
+                user.setNameGroup(resultSet.getString("name_group"));
+                user.setSeq(resultSet.getInt("seq"));
+                return user;
+            }
+        });
+
+    }
 }

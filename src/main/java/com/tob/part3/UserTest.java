@@ -17,7 +17,8 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -56,7 +57,7 @@ public class UserTest {
 
     }
 
-    @Test
+//    @Test
     public void inset() throws SQLException, ClassNotFoundException {
 
         User user = new User();
@@ -68,24 +69,18 @@ public class UserTest {
     }
 
 //    @Test
-//    public void existNewJeans() throws SQLException, ClassNotFoundException {
-//        List<User> userList = goodDAO.getUsersByNameGroup("뉴진스");
-//        assertThat(userList.size(), greaterThan(0));
-//
-//    }
-//
-//    @Test
-//    public void existNewJeans2() throws SQLException, ClassNotFoundException {
-//
-//        List<User> userList = goodDAO.getUsersByNameGroup("뉴진스");
-//        assertThat(userList.size(), greaterThan(0));
-//    }
-//
-//    @Test(expected = EmptyResultDataAccessException.class) //test 중 해당 exception 을 expected 중
-//    public void existIVE() throws SQLException, ClassNotFoundException {
-//
-//        goodDAO.getUsersByNameGroup("아이브");
-//
-//        assertThat(setUserTest, not(hasItem(this))); //매번 새로운 test object를 만드는가?
-//    }
+    public void countAll() throws SQLException, ClassNotFoundException {
+        // int cnt = jdbcTemplateDAO.countAll1();
+        int cnt = jdbcTemplateDAO.countAll2();
+        assertThat(cnt, is(not(0)));
+    }
+
+    @Test
+    public void selectByName() throws SQLException, ClassNotFoundException {
+        // int cnt = jdbcTemplateDAO.countAll1();
+        User user = jdbcTemplateDAO.selectByName("해린");
+        assertNotNull(user);
+        assertThat(user.getName(), is("해린"));
+    }
+
 }

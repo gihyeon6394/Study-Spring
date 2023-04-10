@@ -40,7 +40,7 @@ public class JdbcContext {
             rs = ps.executeQuery();
             rs.next();
             user = new User();
-            user.setSeq(rs.getString("SEQ"));
+            user.setSeq(rs.getInt("SEQ"));
             user.setName(rs.getString("NAME"));
 
 
