@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 
 /**
@@ -97,6 +98,23 @@ public class JDBCTemplateDAO {
                 return user;
             }
         });
+    }
 
+    public List<User> selectAll() {
+        return this.jdbcTemplate.query("select * from tb_user order by dt_ins desc ;", new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet resultSet, int i) throws SQLException {
+                User user = new User();
+                user.setName(resultSet.getString("name"));
+                user.setNameGroup(resultSet.getString("name_group"));
+                user.setSeq(resultSet.getInt("seq"));
+                return user;
+            }
+        });
+
+    }
+
+    public void deleteAll() {
+        this.jdbcTemplate.execute("delete from tb_user;");
     }
 }
