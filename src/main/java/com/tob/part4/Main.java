@@ -2,6 +2,7 @@ package com.tob.part4;
 
 import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import com.tob.part4.exception.DuplicatedUserIDException;
+import com.tob.part4.exception.NoBalanceException;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -39,7 +40,22 @@ import java.sql.SQLException;
  * <p>
  * 체크 예외를 런타임으로 전환했다면, signature에 throws 키워드를 넣어주고, 명세도 자세히 해줘야 함
  * 그래야 메서드 사용자가 {@link RuntimeException}을 던지는 걸 알고, 때에 따라 적절히 처리함
+ * <p>
+ * 어플리케이션 예외
+ * 애플리케이션 레벨에서 의도적으로 예외를 발생시키는 전략
+ * ex. 출금 요청시 잔액이 모자라면 예외를 발생시킴
+ * 보통 CheckedException으로 만듦
+ * 왜냐? 호출한 사람이 예외 가 발생했을 시 처리를 강제하도록 하기 위해 (ex. 출금 요청시 잔액이 부족하다면? 적절히 처리해라)
+ * 예외 말고 return 값을 다르게 주는 방법도 있는데 이는 사용자의 코드 (if 문)이 지저분해진다
  */
+
+/**
+ * Java APi {@link org.springframework.jdbc.core.JdbcTemplate}의 메서드들은 왜 {@link SQLException}을 안던지는가?
+ * 던져봤자 의미가 없다.
+ * SQLException (Checked)를 던져봤자 사용자가 적당히 처리하질 못할것이라 의미가 없다
+ * 따라서 SQLException -> {@link org.springframework.dao.DataAccessException} (Runtime)으로 전환해서 던지고 있다
+ * 사용자는 필요에 따라서 예외를 적절하게 처리하면 된다.
+ * */
 public class Main {
 
     public static void main(String[] args) {
@@ -134,8 +150,29 @@ public class Main {
                 throw new RuntimeException();
             }
         }
+    }
 
+    public static void withDrawClient() {
+        try {
+            withdraw(3000000);
+        } catch (NoBalanceException e) {
+            //잔액이 부족하는 걸 알리도록 적절히 처리
+        }
+    }
+
+    /**
+     * 애플리케이션 예외 (의도적 예외)
+     */
+    public static void withdraw(int money) throws NoBalanceException {
+        int balance = 10000; //현재 잔고 10000원
+        if (money > balance) {
+            throw new NoBalanceException();
+        }
+
+        // 출금 처리
+        //... some code
 
     }
+
 
 }
