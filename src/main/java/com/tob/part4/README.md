@@ -22,7 +22,7 @@
    2. DB 에러 코드 매핑을 통한 전환  
    3. DAO 인터페이스와 DataAccessException 계층 구조  
       - DAO 인터페이스와 구현의 분리  
-      - 데 액세스 예외 추상화와 DataAccessException 계층구조  
+      - 데이터 액세스 예외 추상화와 DataAccessException 계층구조  
    4. 기술에 독립적인 UserDao 만들기  
       - 인터페이스 적용  
       - 테스트 보완  
