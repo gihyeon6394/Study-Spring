@@ -42,5 +42,12 @@ bean 설정을 xml로 하는 것의 장점
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="jdbcTemplateDAO4" class="com.tob.part4.dao.JDBCTemplateDAO">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 
+
+    <bean id="userDaoJDBC" class="com.tob.part4.dao.UserDaoJDBC">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 </beans>

@@ -75,6 +75,102 @@ import java.sql.SQLException;
  * SQLException (Checked)를 던져봤자 사용자가 적당히 처리하질 못할것이라 의미가 없다
  * 따라서 SQLException -> {@link org.springframework.dao.DataAccessException} (Runtime)으로 전환해서 던지고 있다
  * 사용자는 필요에 따라서 예외를 적절하게 처리하면 된다.
+ * <p>
+ * 예외 처리 전략
+ * 런타임 예외가 보편화 되가고 있다.
+ * 체크 예외는 무조건 처리를 강제함
+ * 언체크 예외 (Runtime)는 처리해도되고, 안해도 됨
+ * java 환경이 서버 환경으로 넘어가는 추세에 굳이 예외 처리를 강제할 필요가 없어짐
+ * ex. 사용자가 아이디 잘못입력한 예외를 굳이 처리를 강제하거나, 시스템이 멈춰서 복구가 필요하거나 한가? 그렇지 않음
+ * 그래서 요즘은 Java 예외를 Runtime으로 정의하는 추세임
+ * <p>
+ * 체크 예외를 런타임으로 전환했다면, signature에 throws 키워드를 넣어주고, 명세도 자세히 해줘야 함
+ * 그래야 메서드 사용자가 {@link RuntimeException}을 던지는 걸 알고, 때에 따라 적절히 처리함
+ * <p>
+ * 어플리케이션 예외
+ * 애플리케이션 레벨에서 의도적으로 예외를 발생시키는 전략
+ * ex. 출금 요청시 잔액이 모자라면 예외를 발생시킴
+ * 보통 CheckedException으로 만듦
+ * 왜냐? 호출한 사람이 예외 가 발생했을 시 처리를 강제하도록 하기 위해 (ex. 출금 요청시 잔액이 부족하다면? 적절히 처리해라)
+ * 예외 말고 return 값을 다르게 주는 방법도 있는데 이는 사용자의 코드 (if 문)이 지저분해진다
+ * <p>
+ * Java APi {@link org.springframework.jdbc.core.JdbcTemplate}의 메서드들은 왜 {@link SQLException}을 안던지는가?
+ * 던져봤자 의미가 없다.
+ * SQLException (Checked)를 던져봤자 사용자가 적당히 처리하질 못할것이라 의미가 없다
+ * 따라서 SQLException -> {@link org.springframework.dao.DataAccessException} (Runtime)으로 전환해서 던지고 있다
+ * 사용자는 필요에 따라서 예외를 적절하게 처리하면 된다.
+ * <p>
+ * 예외 처리 전략
+ * 런타임 예외가 보편화 되가고 있다.
+ * 체크 예외는 무조건 처리를 강제함
+ * 언체크 예외 (Runtime)는 처리해도되고, 안해도 됨
+ * java 환경이 서버 환경으로 넘어가는 추세에 굳이 예외 처리를 강제할 필요가 없어짐
+ * ex. 사용자가 아이디 잘못입력한 예외를 굳이 처리를 강제하거나, 시스템이 멈춰서 복구가 필요하거나 한가? 그렇지 않음
+ * 그래서 요즘은 Java 예외를 Runtime으로 정의하는 추세임
+ * <p>
+ * 체크 예외를 런타임으로 전환했다면, signature에 throws 키워드를 넣어주고, 명세도 자세히 해줘야 함
+ * 그래야 메서드 사용자가 {@link RuntimeException}을 던지는 걸 알고, 때에 따라 적절히 처리함
+ * <p>
+ * 어플리케이션 예외
+ * 애플리케이션 레벨에서 의도적으로 예외를 발생시키는 전략
+ * ex. 출금 요청시 잔액이 모자라면 예외를 발생시킴
+ * 보통 CheckedException으로 만듦
+ * 왜냐? 호출한 사람이 예외 가 발생했을 시 처리를 강제하도록 하기 위해 (ex. 출금 요청시 잔액이 부족하다면? 적절히 처리해라)
+ * 예외 말고 return 값을 다르게 주는 방법도 있는데 이는 사용자의 코드 (if 문)이 지저분해진다
+ * <p>
+ * Java APi {@link org.springframework.jdbc.core.JdbcTemplate}의 메서드들은 왜 {@link SQLException}을 안던지는가?
+ * 던져봤자 의미가 없다.
+ * SQLException (Checked)를 던져봤자 사용자가 적당히 처리하질 못할것이라 의미가 없다
+ * 따라서 SQLException -> {@link org.springframework.dao.DataAccessException} (Runtime)으로 전환해서 던지고 있다
+ * 사용자는 필요에 따라서 예외를 적절하게 처리하면 된다.
+ * <p>
+ * 예외 처리 전략
+ * 런타임 예외가 보편화 되가고 있다.
+ * 체크 예외는 무조건 처리를 강제함
+ * 언체크 예외 (Runtime)는 처리해도되고, 안해도 됨
+ * java 환경이 서버 환경으로 넘어가는 추세에 굳이 예외 처리를 강제할 필요가 없어짐
+ * ex. 사용자가 아이디 잘못입력한 예외를 굳이 처리를 강제하거나, 시스템이 멈춰서 복구가 필요하거나 한가? 그렇지 않음
+ * 그래서 요즘은 Java 예외를 Runtime으로 정의하는 추세임
+ * <p>
+ * 체크 예외를 런타임으로 전환했다면, signature에 throws 키워드를 넣어주고, 명세도 자세히 해줘야 함
+ * 그래야 메서드 사용자가 {@link RuntimeException}을 던지는 걸 알고, 때에 따라 적절히 처리함
+ * <p>
+ * 어플리케이션 예외
+ * 애플리케이션 레벨에서 의도적으로 예외를 발생시키는 전략
+ * ex. 출금 요청시 잔액이 모자라면 예외를 발생시킴
+ * 보통 CheckedException으로 만듦
+ * 왜냐? 호출한 사람이 예외 가 발생했을 시 처리를 강제하도록 하기 위해 (ex. 출금 요청시 잔액이 부족하다면? 적절히 처리해라)
+ * 예외 말고 return 값을 다르게 주는 방법도 있는데 이는 사용자의 코드 (if 문)이 지저분해진다
+ * <p>
+ * Java APi {@link org.springframework.jdbc.core.JdbcTemplate}의 메서드들은 왜 {@link SQLException}을 안던지는가?
+ * 던져봤자 의미가 없다.
+ * SQLException (Checked)를 던져봤자 사용자가 적당히 처리하질 못할것이라 의미가 없다
+ * 따라서 SQLException -> {@link org.springframework.dao.DataAccessException} (Runtime)으로 전환해서 던지고 있다
+ * 사용자는 필요에 따라서 예외를 적절하게 처리하면 된다.
+ * <p>
+ * 예외 처리 전략
+ * 런타임 예외가 보편화 되가고 있다.
+ * 체크 예외는 무조건 처리를 강제함
+ * 언체크 예외 (Runtime)는 처리해도되고, 안해도 됨
+ * java 환경이 서버 환경으로 넘어가는 추세에 굳이 예외 처리를 강제할 필요가 없어짐
+ * ex. 사용자가 아이디 잘못입력한 예외를 굳이 처리를 강제하거나, 시스템이 멈춰서 복구가 필요하거나 한가? 그렇지 않음
+ * 그래서 요즘은 Java 예외를 Runtime으로 정의하는 추세임
+ * <p>
+ * 체크 예외를 런타임으로 전환했다면, signature에 throws 키워드를 넣어주고, 명세도 자세히 해줘야 함
+ * 그래야 메서드 사용자가 {@link RuntimeException}을 던지는 걸 알고, 때에 따라 적절히 처리함
+ * <p>
+ * 어플리케이션 예외
+ * 애플리케이션 레벨에서 의도적으로 예외를 발생시키는 전략
+ * ex. 출금 요청시 잔액이 모자라면 예외를 발생시킴
+ * 보통 CheckedException으로 만듦
+ * 왜냐? 호출한 사람이 예외 가 발생했을 시 처리를 강제하도록 하기 위해 (ex. 출금 요청시 잔액이 부족하다면? 적절히 처리해라)
+ * 예외 말고 return 값을 다르게 주는 방법도 있는데 이는 사용자의 코드 (if 문)이 지저분해진다
+ * <p>
+ * Java APi {@link org.springframework.jdbc.core.JdbcTemplate}의 메서드들은 왜 {@link SQLException}을 안던지는가?
+ * 던져봤자 의미가 없다.
+ * SQLException (Checked)를 던져봤자 사용자가 적당히 처리하질 못할것이라 의미가 없다
+ * 따라서 SQLException -> {@link org.springframework.dao.DataAccessException} (Runtime)으로 전환해서 던지고 있다
+ * 사용자는 필요에 따라서 예외를 적절하게 처리하면 된다.
  */
 
 /**
@@ -112,6 +208,10 @@ import java.sql.SQLException;
  * - 비표준 SQL
  * - SQLException에 디비 별로 다른 에러 코드
  *
+ * {@link org.springframework.jdbc.support.SQLErrorCodes} 에 스프링이 자체적으로 DB 에러코드와 java exception을 매핑해둠
+ * 따라서 JDBCTemplate를 사용하면 유 별로 미리 준비된 예외코드에 해당하는 예외를 던져줌
+ *
+ *
  * */
 public class Main {
 
@@ -123,16 +223,18 @@ public class Main {
          * 2. 바깥 scope로 계속 throws
          * */
 
-        try {
-            //.. SQLException 을 던지는 코드...
-            throw new SQLException();
-        } catch (SQLException e) {
+//        try {
+//            //.. SQLException 을 던지는 코드...
+//            throw new SQLException();
+//        } catch (SQLException e) {
+//
+//            // 1. catch 에서 아무것도 안함
+//            // 2. 콘솔에 남기고 끝
+//            System.out.println(e);
+//            e.printStackTrace();
+//        }
 
-            // 1. catch 에서 아무것도 안함
-            // 2. 콘솔에 남기고 끝
-            System.out.println(e);
-            e.printStackTrace();
-        }
+
 
     }
 
