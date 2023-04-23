@@ -15,7 +15,7 @@
         - UserServiceTest 테스트 클래스
         - upgradeLevels() 메소드
         - upgradeLevels() 테스트
-    4. UserServce.add()
+    4. UserService.add()
     5. 코드 개선
         - upgradeLevels() 메소드 코드의 문제점
         - upgradeLevels() 리팩토링
