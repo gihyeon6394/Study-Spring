@@ -1,4 +1,4 @@
-package com.tob.part5;
+package com.tob.part5.vo;
 
 /**
  * 사용자 레벨을 관리
