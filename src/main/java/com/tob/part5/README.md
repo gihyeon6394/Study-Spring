@@ -16,7 +16,7 @@
         - 수정 기능 테스트 추가
         - UserDao와 UserDaoJdbc 수정
         - 수정 테스트 보완
-    3. UserService.upagtedLevels()
+    3. UserService.upgradeLevels()
         - UserService 클래스와 빈 등록
         - UserServiceTest 테스트 클래스
         - upgradeLevels() 메소드
