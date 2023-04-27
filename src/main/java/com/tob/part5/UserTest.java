@@ -27,9 +27,9 @@ public class UserTest {
     @Autowired
     private ApplicationContext ac;
 
-    private User user1;
-    private User user2;
-    private User user3;
+    private User karina;
+    private User giselle;
+    private User hani;
 
 
     public static void main(String args[]) throws SQLException, ClassNotFoundException {
@@ -50,9 +50,9 @@ public class UserTest {
     }
 
     public void setUp() {
-        user1 = new User.Builder().name("카리나").nameGroup("에스파").level(Level.GOLD).build();
-        user2 = new User.Builder().name("지젤").nameGroup("에스파").level(Level.BASIC).build();
-        user3 = new User.Builder().name("팜하니").nameGroup("뉴진스").level(Level.GOLD).build();
+        karina = new User.Builder().name("카리나").nameGroup("에스파").level(Level.GOLD).build();
+        giselle = new User.Builder().name("지젤").nameGroup("에스파").level(Level.BASIC).build();
+        hani = new User.Builder().name("팜하니").nameGroup("뉴진스").level(Level.GOLD).build();
     }
 
 
@@ -67,22 +67,22 @@ public class UserTest {
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException {
 
-        int result = jdbcTemplateDAO.add(user1);
+        int result = jdbcTemplateDAO.add(karina);
         assertThat(result, is(1));
 
-        checkSameUser(user1, jdbcTemplateDAO.getByUserName(user1.getName()));
+        checkSameUser(karina, jdbcTemplateDAO.getByUserName(karina.getName()));
 
 
-        result = jdbcTemplateDAO.add(user2);
+        result = jdbcTemplateDAO.add(giselle);
         assertThat(result, is(1));
 
-        checkSameUser(user2, jdbcTemplateDAO.getByUserName(user2.getName()));
+        checkSameUser(giselle, jdbcTemplateDAO.getByUserName(giselle.getName()));
 
 
-        result = jdbcTemplateDAO.add(user3);
+        result = jdbcTemplateDAO.add(hani);
         assertThat(result, is(1));
 
-        checkSameUser(user3, jdbcTemplateDAO.getByUserName(user3.getName()));
+        checkSameUser(hani, jdbcTemplateDAO.getByUserName(hani.getName()));
 
     }
 
@@ -90,6 +90,25 @@ public class UserTest {
         assertThat(user1.getName(), is(user2.getName()));
         assertThat(user1.getNameGroup(), is(user2.getNameGroup()));
         assertThat(user1.getLevel(), is(user2.getLevel()));
+    }
+
+    @Test
+    public void update() {
+        deleteAll();
+        jdbcTemplateDAO.add(karina);
+        jdbcTemplateDAO.add(giselle);
+
+        karina = new User.Builder().name("카리나").nameGroup("에스파시즌2").level(Level.GOLD).build();
+
+        jdbcTemplateDAO.update(karina);
+
+        User karinaUpdated = jdbcTemplateDAO.getByUserName(karina.getName());
+        checkSameUser(karina, karinaUpdated);
+
+        //원하는 User만 update 되었는지 확인
+        User giselleInDB = jdbcTemplateDAO.getByUserName(giselle.getName());
+        checkSameUser(giselle, giselleInDB);
+
     }
 
 }

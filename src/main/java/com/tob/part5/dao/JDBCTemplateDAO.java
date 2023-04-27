@@ -64,5 +64,8 @@ public class JDBCTemplateDAO {
         this.jdbcTemplate.execute("delete from tb_user;");
     }
 
-
+    public void update(User karina) {
+        jdbcTemplate.update("update tb_user set name_group = ?, level = ?, dt_updt = now() where name = ?;"
+                , karina.getNameGroup(), karina.getLevel().intValue(), karina.getName());
+    }
 }

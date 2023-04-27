@@ -6,6 +6,9 @@
 1. 사용자 레벨 관리 기능 추가
     1. 필드 추가
         - Level 이늄
+            > static final int 보다 enum 이 낫다    
+            타입 안정성
+
         - User 필드 추가
         - UserDaoTest 테스트 수정
         - UserDaoJdbc 수정
