@@ -24,6 +24,8 @@
         - upgradeLevels() 메소드
         - upgradeLevels() 테스트
     4. UserService.add()
+        > 필드의 기본값 지정은 비즈니스 로직이므로 클래스, DAO, service 중 service가 적절
+        
     5. 코드 개선
         - upgradeLevels() 메소드 코드의 문제점
         - upgradeLevels() 리팩토링
