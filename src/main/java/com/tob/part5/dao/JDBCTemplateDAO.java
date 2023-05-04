@@ -24,6 +24,8 @@ public class JDBCTemplateDAO {
                     .name(resultSet.getString("name"))
                     .nameGroup(resultSet.getString("name_group"))
                     .level(Level.valueOf(resultSet.getInt("level")))
+                    .cntLogin(resultSet.getInt("cnt_login"))
+                    .cntRecommend(resultSet.getInt("cnt_recommend"))
                     .build();
         }
     };
@@ -35,8 +37,8 @@ public class JDBCTemplateDAO {
 
     public int add(User user) throws DuplicateKeyException {
 
-        return this.jdbcTemplate.update("insert into tb_user (SEQ, NAME, DT_INS, NAME_GROUP, LEVEL)" +
-                "values (?, ?, now(), ?, ?) ", user.getSeq(), user.getName(), user.getNameGroup(), user.getLevel().intValue());
+        return this.jdbcTemplate.update("insert into tb_user (SEQ, NAME, DT_INS, NAME_GROUP, LEVEL, CNT_LOGIN, CNT_RECOMMEND)" +
+                "values (?, ?, now(), ?, ?, ?, ?) ", user.getSeq(), user.getName(), user.getNameGroup(), user.getLevel().intValue(), user.getCntLogin(), user.getCntRecommend());
     }
 
 
@@ -64,8 +66,8 @@ public class JDBCTemplateDAO {
         this.jdbcTemplate.execute("delete from tb_user;");
     }
 
-    public void update(User karina) {
-        jdbcTemplate.update("update tb_user set name_group = ?, level = ?, dt_updt = now() where name = ?;"
-                , karina.getNameGroup(), karina.getLevel().intValue(), karina.getName());
+    public void update(User user) {
+        jdbcTemplate.update("update tb_user set name_group = ?, level = ?, cnt_login = ?, cnt_recommend = ?, dt_updt = now() where name = ?;"
+                , user.getNameGroup(), user.getLevel().intValue(), user.getCntLogin(), user.getCntRecommend(), user.getName());
     }
 }

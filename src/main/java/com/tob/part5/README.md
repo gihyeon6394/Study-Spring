@@ -18,6 +18,8 @@
         - 수정 테스트 보완
     3. UserService.upgradeLevels()
         - UserService 클래스와 빈 등록
+          > service 원칙 : dao 구현체가 바뀌어도 service 로직이 수정되면 안됨
+
         - UserServiceTest 테스트 클래스
         - upgradeLevels() 메소드
         - upgradeLevels() 테스트

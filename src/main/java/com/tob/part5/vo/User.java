@@ -11,12 +11,20 @@ public class User {
 
     private Level level;
 
+    private int cntLogin; // 로그인 횟수
+
+    private  int cntRecommend; // 추천 횟수
+
 
     public static class Builder {
         private int seq;
         private String name;
         private String nameGroup;
         private Level level;
+
+        private int cntLogin;
+
+        private int cntRecommend;
 
         public Builder() {
         }
@@ -41,6 +49,17 @@ public class User {
             return this;
         }
 
+        public Builder cntLogin(int cntLogin) {
+            this.cntLogin = cntLogin;
+            return this;
+        }
+
+        public Builder cntRecommend(int cntRecommend) {
+            this.cntRecommend = cntRecommend;
+            return this;
+        }
+
+
         public User build() {
             return new User(this);
         }
@@ -62,18 +81,36 @@ public class User {
         return level;
     }
 
+    public int getCntLogin() {
+        return cntLogin;
+    }
+
+    public int getCntRecommend() {
+        return cntRecommend;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
     public User(Builder builder) {
         this.seq = builder.seq;
         this.name = builder.name;
         this.nameGroup = builder.nameGroup;
         this.level = builder.level;
+        this.cntLogin = builder.cntLogin;
+        this.cntRecommend = builder.cntRecommend;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "seq='" + seq + '\'' +
+                "seq=" + seq +
                 ", name='" + name + '\'' +
+                ", nameGroup='" + nameGroup + '\'' +
+                ", level=" + level +
+                ", cntLogin=" + cntLogin +
+                ", cntRecommend=" + cntRecommend +
                 '}';
     }
 
@@ -85,6 +122,8 @@ public class User {
         User user = (User) o;
 
         if (seq != user.seq) return false;
+        if (cntLogin != user.cntLogin) return false;
+        if (cntRecommend != user.cntRecommend) return false;
         if (!Objects.equals(name, user.name)) return false;
         if (!Objects.equals(nameGroup, user.nameGroup)) return false;
         return level == user.level;
@@ -96,6 +135,8 @@ public class User {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (nameGroup != null ? nameGroup.hashCode() : 0);
         result = 31 * result + (level != null ? level.hashCode() : 0);
+        result = 31 * result + cntLogin;
+        result = 31 * result + cntRecommend;
         return result;
     }
 }
