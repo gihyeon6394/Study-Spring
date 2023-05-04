@@ -13,7 +13,7 @@ public class User {
 
     private int cntLogin; // 로그인 횟수
 
-    private  int cntRecommend; // 추천 횟수
+    private int cntRecommend; // 추천 횟수
 
 
     public static class Builder {
@@ -138,5 +138,14 @@ public class User {
         result = 31 * result + cntLogin;
         result = 31 * result + cntRecommend;
         return result;
+    }
+
+    public void upgradeLevel() {
+        Level nextLevel = this.level.getNextLevel();
+        if (nextLevel == null) {
+            throw new IllegalStateException(this.level + "은 업그레이드가 불가능합니다.");
+        } else {
+            this.level = nextLevel;
+        }
     }
 }

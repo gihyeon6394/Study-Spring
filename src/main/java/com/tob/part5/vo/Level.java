@@ -11,12 +11,19 @@ public enum Level {
      */
     //public  static final int BASIC = 1;
 
-    GOLD(3), SILVER(2), BASIC(1);
+    GOLD(3, null), SILVER(2, GOLD), BASIC(1, SILVER);
 
     private final int value;
 
-    Level(int value) {
+    private final Level nextLevel;
+
+    Level(int value, Level nextLevel) {
         this.value = value;
+        this.nextLevel = nextLevel;
+    }
+
+    public Level getNextLevel() {
+        return nextLevel;
     }
 
     public int intValue() {

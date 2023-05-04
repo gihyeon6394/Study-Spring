@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.tob.part5.service.UserService.MIN_LOGIN_COUNT_FOR_SILVER;
+import static com.tob.part5.service.UserService.MIN_RECOMMEND_COUNT_FOR_GOLD;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -37,6 +39,8 @@ public class UserServiceTest {
 
     private List<User> userList;
 
+    private User user;
+
     public static void main(String args[]) throws SQLException, ClassNotFoundException {
 
         JUnitCore.main("com.tob.part5.UserServiceTest");
@@ -53,12 +57,15 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         userDao = this.ac.getBean("jdbcTemplateDAO5", JDBCTemplateDAO.class); // getBean() : Dependency lookup
-        userList = Arrays.asList(new User.Builder().name("카리나").nameGroup("에스파").level(Level.GOLD).cntLogin(40).cntRecommend(20).build()
-                , new User.Builder().name("지수").nameGroup("블랙핑크").level(Level.SILVER).cntLogin(50).cntRecommend(30).build()
-                , new User.Builder().name("아이린").nameGroup("레드벨벳").level(Level.BASIC).cntLogin(49).cntRecommend(10).build()
-                , new User.Builder().name("쯔위").nameGroup("트와이스").level(Level.BASIC).cntLogin(50).cntRecommend(30).build()
-                , new User.Builder().name("수지").nameGroup("미쓰에이").level(Level.BASIC).cntLogin(50).cntRecommend(30).build()
-                , new User.Builder().name("아이유").nameGroup("솔로").level(Level.BASIC).cntLogin(50).cntRecommend(30).build());
+        // 경계값을 사용하는 테스트
+        userList = Arrays.asList(new User.Builder().name("카리나").nameGroup("에스파").level(Level.GOLD).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER - 10).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD - 10).build()
+                , new User.Builder().name("지수").nameGroup("블랙핑크").level(Level.SILVER).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build()
+                , new User.Builder().name("아이린").nameGroup("레드벨벳").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER - 1).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD - 20).build()
+                , new User.Builder().name("쯔위").nameGroup("트와이스").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build()
+                , new User.Builder().name("수지").nameGroup("미쓰에이").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build()
+                , new User.Builder().name("아이유").nameGroup("솔로").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build());
+
+        user = new User.Builder().name("테스트").nameGroup("테스트").level(Level.BASIC).cntLogin(1).cntRecommend(1).build();
     }
 
     @Test
@@ -70,24 +77,43 @@ public class UserServiceTest {
 
         userService.upgradeLevels();
 
-        checkLevel(userList.get(0), Level.GOLD);
+        /**
+         * 문제점 : 일일이 기대값을 지정해야함
+         * */
+       /* checkLevel(userList.get(0), Level.GOLD);
         checkLevel(userList.get(1), Level.GOLD);
         checkLevel(userList.get(2), Level.BASIC);
         checkLevel(userList.get(3), Level.SILVER);
         checkLevel(userList.get(4), Level.SILVER);
-        checkLevel(userList.get(5), Level.SILVER);
+        checkLevel(userList.get(5), Level.SILVER);*/
+
+        checkLevelUpgraded(userList.get(0), false);
+        checkLevelUpgraded(userList.get(1), true);
+        checkLevelUpgraded(userList.get(2), false);
+        checkLevelUpgraded(userList.get(3), true);
+        checkLevelUpgraded(userList.get(4), true);
+        checkLevelUpgraded(userList.get(5), true);
+
     }
 
-    private void checkLevel(User user, Level basic) {
+    private void checkLevel(User user, Level levelExpected) {
         User userUpdate = userDao.selectByName(user.getName());
-        assertThat(userUpdate.getLevel(), is(basic));
+        assertThat(userUpdate.getLevel(), is(levelExpected));
+    }
+
+    private void checkLevelUpgraded(User user, boolean upgraded) {
+        User userUpdate = userDao.selectByName(user.getName());
+        if (upgraded) {
+            assertThat(userUpdate.getLevel(), is(user.getLevel().getNextLevel()));
+        } else {
+            assertThat(userUpdate.getLevel(), is(user.getLevel()));
+        }
     }
 
     /**
      * add() 호출 시
      * 레벨이 비어있다면, BASIC
      * 레벨이 있다면 그대로 유지
-     *
      */
     @Test
     public void add() {
@@ -106,6 +132,27 @@ public class UserServiceTest {
 
         assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
         assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
+    }
+
+    @Test
+    public void upgradeLevel() {
+        Level[] levels = Level.values();
+        for (Level level : levels) {
+            if (level.getNextLevel() == null) continue;
+            user.setLevel(level);
+            user.upgradeLevel();
+            assertThat(user.getLevel(), is(level.getNextLevel()));
+        }
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void cannotUpgradeLevel() {
+        Level[] levels = Level.values();
+        for (Level level : levels) {
+            if (level.getNextLevel() != null) continue;
+            user.setLevel(level);
+            user.upgradeLevel();
+        }
     }
 
 }

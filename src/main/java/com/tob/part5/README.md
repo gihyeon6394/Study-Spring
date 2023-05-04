@@ -29,6 +29,9 @@
     5. 코드 개선
         - upgradeLevels() 메소드 코드의 문제점
         - upgradeLevels() 리팩토링
+            > - User : 본인에 대한 정보와 기능
+              - Service : 비즈니스
+              - Dao : 디비 접근
         - User 테스트
         - UserServiceTest 개선
 2. 트랜잭션 서비스 추상화

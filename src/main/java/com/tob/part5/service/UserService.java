@@ -22,26 +22,50 @@ public class UserService {
         this.userDao = userDao;
     }
 
+    public static final int MIN_LOGIN_COUNT_FOR_SILVER = 50;
+    public static final int MIN_RECOMMEND_COUNT_FOR_GOLD = 30;
+
+    /**
+     * User : 본인에 대한 정보와 기능
+     * Service : 비즈니스
+     * Dao : 디비 접근
+     */
     public void upgradeLevels() {
         List<User> userList = userDao.selectAll();
-        Boolean changed = false; // 레벨 변화가 있는가
 
         for (User user : userList) {
-            if (user.getLevel() == Level.BASIC && user.getCntLogin() >= 50) {
-                user.setLevel(Level.SILVER);
-                changed = true;
-            } else if (user.getLevel() == Level.SILVER && user.getCntRecommend() >= 30) {
-                user.setLevel(Level.GOLD);
-                changed = true;
-            } else if (user.getLevel() == Level.GOLD) {
-                changed = false;
-            } else {
-                changed = false;
+            if (canUpgradeLevel(user)) {
+                upgradeLevel(user);
             }
+        }
+    }
 
-            if (changed) {
-                userDao.update(user);
-            }
+    /**
+     * 다음단계가 무엇인가를 여기서 판단하지 말자
+     */
+    private void upgradeLevel(User user) {
+
+        /*if (user.getLevel() == Level.BASIC) {
+            user.setLevel(Level.SILVER);
+        } else if (user.getLevel() == Level.SILVER) {
+            user.setLevel(Level.GOLD);
+        }*/
+        user.upgradeLevel();
+        userDao.update(user);
+    }
+
+    private boolean canUpgradeLevel(User user) {
+        Level currentLevel = user.getLevel();
+
+        switch (currentLevel) {
+            case BASIC:
+                return (user.getCntLogin() >= MIN_LOGIN_COUNT_FOR_SILVER);
+            case SILVER:
+                return (user.getCntRecommend() >= MIN_RECOMMEND_COUNT_FOR_GOLD);
+            case GOLD:
+                return false;
+            default:
+                throw new IllegalArgumentException("Unknown Level: " + currentLevel);
         }
     }
 
