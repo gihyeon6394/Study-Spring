@@ -1,6 +1,7 @@
 package com.tob.part5;
 
 import com.tob.part5.dao.JDBCTemplateDAO;
+import com.tob.part5.service.UserService;
 import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
 import org.junit.Before;
