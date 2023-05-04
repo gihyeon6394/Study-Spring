@@ -82,4 +82,30 @@ public class UserServiceTest {
         User userUpdate = userDao.selectByName(user.getName());
         assertThat(userUpdate.getLevel(), is(basic));
     }
+
+    /**
+     * add() 호출 시
+     * 레벨이 비어있다면, BASIC
+     * 레벨이 있다면 그대로 유지
+     *
+     */
+    @Test
+    public void add() {
+        userDao.deleteAll();
+
+        User userWithLevel = userList.get(4); // BASIC
+        User userWithoutLevel = userList.get(0); // 레벨이 비어있는 사용자
+
+        userWithoutLevel.setLevel(null);
+
+        userService.add(userWithLevel);
+        userService.add(userWithoutLevel);
+
+        User userWithLevelRead = userDao.selectByName(userWithLevel.getName());
+        User userWithoutLevelRead = userDao.selectByName(userWithoutLevel.getName());
+
+        assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
+        assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
+    }
+
 }

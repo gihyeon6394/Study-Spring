@@ -35,6 +35,12 @@ public class JDBCTemplateDAO {
     }
 
 
+    /**
+     * 필드의 최초 기본값 초기화는 어디서?
+     * 1. 클래스 : 최초 기본값은 최초가 아닐떄는 무의미한 정보라 클래스에서 하는 건 별로
+     * 2. DAO : 여긴 디비에 값을 넣는거에만 관심이 있어야함
+     * 3. service : 비즈니스적인 로직이므로 적절함!
+     * */
     public int add(User user) throws DuplicateKeyException {
 
         return this.jdbcTemplate.update("insert into tb_user (SEQ, NAME, DT_INS, NAME_GROUP, LEVEL, CNT_LOGIN, CNT_RECOMMEND)" +
