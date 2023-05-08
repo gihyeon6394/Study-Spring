@@ -155,4 +155,26 @@ public class UserServiceTest {
         }
     }
 
+    /**
+     * upgradeLevel 도중 예외 발생 시 기존 트랜잭션도 rollback 되는지 테스트
+     * test fail! 원자적이지 못함
+     */
+
+    @Test
+    public void upgradeAllOrNothing() {
+        UserService testUserService = new UserService.TestUserService(userList.get(3).getName());
+        testUserService.setUserDao(userDao);
+        userDao.deleteAll();
+        for(User user : userList) {
+            userDao.add(user);
+        }
+        try{
+            testUserService.upgradeLevels();
+        }catch (UserService.TestUserService.TestUserServiceException e) {
+
+        }
+        checkLevelUpgraded(userList.get(1), false);
+    }
+
+
 }

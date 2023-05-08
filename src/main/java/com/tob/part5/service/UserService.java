@@ -43,7 +43,7 @@ public class UserService {
     /**
      * 다음단계가 무엇인가를 여기서 판단하지 말자
      */
-    private void upgradeLevel(User user) {
+    protected void upgradeLevel(User user) {
 
         /*if (user.getLevel() == Level.BASIC) {
             user.setLevel(Level.SILVER);
@@ -75,4 +75,27 @@ public class UserService {
         }
         userDao.add(user);
     }
+
+    /**
+     * 비즈니스 도중 예외 발생 테스트 용도
+     */
+    public static class TestUserService extends UserService {
+        private String name;
+
+        public TestUserService(String name) {
+            this.name = name;
+        }
+
+        @Override
+        protected void upgradeLevel(User user) {
+            if (user.getName().equals(this.name)) {
+                throw new TestUserServiceException();
+            }
+            super.upgradeLevel(user);
+        }
+
+        public static class TestUserServiceException extends RuntimeException {
+        }
+    }
+
 }
