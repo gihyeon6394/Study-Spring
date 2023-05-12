@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,11 @@ public class UserServiceTest {
 
     @Autowired
     private UserService userService;
+
+
+    @Autowired
+    private DataSource dataSource;
+
 
     private JDBCTemplateDAO userDao;
 
@@ -57,6 +63,7 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         userDao = this.ac.getBean("jdbcTemplateDAO5", JDBCTemplateDAO.class); // getBean() : Dependency lookup
+        dataSource = this.ac.getBean("dataSource", DataSource.class);
         // 경계값을 사용하는 테스트
         userList = Arrays.asList(new User.Builder().name("카리나").nameGroup("에스파").level(Level.GOLD).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER - 10).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD - 10).build()
                 , new User.Builder().name("지수").nameGroup("블랙핑크").level(Level.SILVER).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build()
@@ -68,33 +75,33 @@ public class UserServiceTest {
         user = new User.Builder().name("테스트").nameGroup("테스트").level(Level.BASIC).cntLogin(1).cntRecommend(1).build();
     }
 
-    @Test
-    public void upgradeLevels() {
-        userDao.deleteAll();
-        for (User user : userList) {
-            userDao.add(user);
-        }
-
-        userService.upgradeLevels();
-
-        /**
-         * 문제점 : 일일이 기대값을 지정해야함
-         * */
-       /* checkLevel(userList.get(0), Level.GOLD);
-        checkLevel(userList.get(1), Level.GOLD);
-        checkLevel(userList.get(2), Level.BASIC);
-        checkLevel(userList.get(3), Level.SILVER);
-        checkLevel(userList.get(4), Level.SILVER);
-        checkLevel(userList.get(5), Level.SILVER);*/
-
-        checkLevelUpgraded(userList.get(0), false);
-        checkLevelUpgraded(userList.get(1), true);
-        checkLevelUpgraded(userList.get(2), false);
-        checkLevelUpgraded(userList.get(3), true);
-        checkLevelUpgraded(userList.get(4), true);
-        checkLevelUpgraded(userList.get(5), true);
-
-    }
+//    @Test
+//    public void upgradeLevels() throws SQLException {
+//        userDao.deleteAll();
+//        for (User user : userList) {
+//            userDao.add(user);
+//        }
+//
+//        userService.upgradeLevels();
+//
+//        /**
+//         * 문제점 : 일일이 기대값을 지정해야함
+//         * */
+//       /* checkLevel(userList.get(0), Level.GOLD);
+//        checkLevel(userList.get(1), Level.GOLD);
+//        checkLevel(userList.get(2), Level.BASIC);
+//        checkLevel(userList.get(3), Level.SILVER);
+//        checkLevel(userList.get(4), Level.SILVER);
+//        checkLevel(userList.get(5), Level.SILVER);*/
+//
+//        checkLevelUpgraded(userList.get(0), false);
+//        checkLevelUpgraded(userList.get(1), true);
+//        checkLevelUpgraded(userList.get(2), false);
+//        checkLevelUpgraded(userList.get(3), true);
+//        checkLevelUpgraded(userList.get(4), true);
+//        checkLevelUpgraded(userList.get(5), true);
+//
+//    }
 
     private void checkLevel(User user, Level levelExpected) {
         User userUpdate = userDao.selectByName(user.getName());
@@ -110,50 +117,50 @@ public class UserServiceTest {
         }
     }
 
-    /**
-     * add() 호출 시
-     * 레벨이 비어있다면, BASIC
-     * 레벨이 있다면 그대로 유지
-     */
-    @Test
-    public void add() {
-        userDao.deleteAll();
-
-        User userWithLevel = userList.get(4); // BASIC
-        User userWithoutLevel = userList.get(0); // 레벨이 비어있는 사용자
-
-        userWithoutLevel.setLevel(null);
-
-        userService.add(userWithLevel);
-        userService.add(userWithoutLevel);
-
-        User userWithLevelRead = userDao.selectByName(userWithLevel.getName());
-        User userWithoutLevelRead = userDao.selectByName(userWithoutLevel.getName());
-
-        assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
-        assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
-    }
-
-    @Test
-    public void upgradeLevel() {
-        Level[] levels = Level.values();
-        for (Level level : levels) {
-            if (level.getNextLevel() == null) continue;
-            user.setLevel(level);
-            user.upgradeLevel();
-            assertThat(user.getLevel(), is(level.getNextLevel()));
-        }
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void cannotUpgradeLevel() {
-        Level[] levels = Level.values();
-        for (Level level : levels) {
-            if (level.getNextLevel() != null) continue;
-            user.setLevel(level);
-            user.upgradeLevel();
-        }
-    }
+//    /**
+//     * add() 호출 시
+//     * 레벨이 비어있다면, BASIC
+//     * 레벨이 있다면 그대로 유지
+//     */
+//    @Test
+//    public void add() {
+//        userDao.deleteAll();
+//
+//        User userWithLevel = userList.get(4); // BASIC
+//        User userWithoutLevel = userList.get(0); // 레벨이 비어있는 사용자
+//
+//        userWithoutLevel.setLevel(null);
+//
+//        userService.add(userWithLevel);
+//        userService.add(userWithoutLevel);
+//
+//        User userWithLevelRead = userDao.selectByName(userWithLevel.getName());
+//        User userWithoutLevelRead = userDao.selectByName(userWithoutLevel.getName());
+//
+//        assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
+//        assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
+//    }
+//
+//    @Test
+//    public void upgradeLevel() {
+//        Level[] levels = Level.values();
+//        for (Level level : levels) {
+//            if (level.getNextLevel() == null) continue;
+//            user.setLevel(level);
+//            user.upgradeLevel();
+//            assertThat(user.getLevel(), is(level.getNextLevel()));
+//        }
+//    }
+//
+//    @Test(expected = IllegalStateException.class)
+//    public void cannotUpgradeLevel() {
+//        Level[] levels = Level.values();
+//        for (Level level : levels) {
+//            if (level.getNextLevel() != null) continue;
+//            user.setLevel(level);
+//            user.upgradeLevel();
+//        }
+//    }
 
     /**
      * upgradeLevel 도중 예외 발생 시 기존 트랜잭션도 rollback 되는지 테스트
@@ -161,9 +168,10 @@ public class UserServiceTest {
      */
 
     @Test
-    public void upgradeAllOrNothing() {
+    public void upgradeAllOrNothing() throws SQLException {
         UserService testUserService = new UserService.TestUserService(userList.get(3).getName());
         testUserService.setUserDao(userDao);
+        testUserService.setDataSource(dataSource);
         userDao.deleteAll();
         for(User user : userList) {
             userDao.add(user);

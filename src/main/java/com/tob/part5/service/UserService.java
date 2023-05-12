@@ -3,7 +3,12 @@ package com.tob.part5.service;
 import com.tob.part5.dao.JDBCTemplateDAO;
 import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -16,6 +21,12 @@ import java.util.List;
 public class UserService {
 
     private JDBCTemplateDAO userDao;
+
+    private DataSource dataSource;
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
 
     public void setUserDao(JDBCTemplateDAO userDao) {
@@ -30,7 +41,7 @@ public class UserService {
      * Service : 비즈니스
      * Dao : 디비 접근
      */
-    public void upgradeLevels() {
+    /*public void upgradeLevels() {
         List<User> userList = userDao.selectAll();
 
         for (User user : userList) {
@@ -38,7 +49,35 @@ public class UserService {
                 upgradeLevel(user);
             }
         }
+    }*/
+
+    /**
+     * 트랜잭션 동기화를 적용한 upgradeLevels()
+     */
+    public void upgradeLevels() throws SQLException {
+        TransactionSynchronizationManager.initSynchronization();
+        Connection c = DataSourceUtils.getConnection(dataSource);
+        c.setAutoCommit(false);
+
+        try {
+            List<User> userList = userDao.selectAll();
+
+            for (User user : userList) {
+                if (canUpgradeLevel(user)) {
+                    upgradeLevel(user);
+                }
+            }
+
+        } catch (Exception e) {
+            c.rollback();
+            throw e;
+        } finally {
+            DataSourceUtils.releaseConnection(c, dataSource);
+            TransactionSynchronizationManager.unbindResource(this.dataSource);
+            TransactionSynchronizationManager.clearSynchronization();
+        }
     }
+
 
     /**
      * 다음단계가 무엇인가를 여기서 판단하지 말자
