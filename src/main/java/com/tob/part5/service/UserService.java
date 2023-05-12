@@ -3,11 +3,10 @@ package com.tob.part5.service;
 import com.tob.part5.dao.JDBCTemplateDAO;
 import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -22,15 +21,14 @@ public class UserService {
 
     private JDBCTemplateDAO userDao;
 
-    private DataSource dataSource;
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
+    private  PlatformTransactionManager transactionManager;
 
     public void setUserDao(JDBCTemplateDAO userDao) {
         this.userDao = userDao;
+    }
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     public static final int MIN_LOGIN_COUNT_FOR_SILVER = 50;
@@ -53,11 +51,17 @@ public class UserService {
 
     /**
      * 트랜잭션 동기화를 적용한 upgradeLevels()
+     * 주석처리 후 트랜잭션 서비스 추상화 구현
      */
     public void upgradeLevels() throws SQLException {
-        TransactionSynchronizationManager.initSynchronization();
-        Connection c = DataSourceUtils.getConnection(dataSource);
-        c.setAutoCommit(false);
+//        PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource); // jdbc
+//        PlatformTransactionManager transactionManager = new JtaTransactionManager(); // jta
+
+        TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+//        TransactionSynchronizationManager.initSynchronization();
+//        Connection c = DataSourceUtils.getConnection(dataSource);
+//        c.setAutoCommit(false);
 
         try {
             List<User> userList = userDao.selectAll();
@@ -67,15 +71,16 @@ public class UserService {
                     upgradeLevel(user);
                 }
             }
-
+            transactionManager.commit(status);
         } catch (Exception e) {
-            c.rollback();
+//            c.rollback();
+            transactionManager.rollback(status);
             throw e;
-        } finally {
+        } /*finally {
             DataSourceUtils.releaseConnection(c, dataSource);
             TransactionSynchronizationManager.unbindResource(this.dataSource);
             TransactionSynchronizationManager.clearSynchronization();
-        }
+        }*/
     }
 
 

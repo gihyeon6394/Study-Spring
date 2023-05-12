@@ -17,6 +17,10 @@ bean 설정을 xml로 하는 것의 장점
         <property name="password" value="root"/>
     </bean>
 
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
 
     <!--여러개의 구현 클래스르 나열-->
     <bean id="nConnectionMaker" class="com.tob.part1.connectionMaker.NConnectionMaker"/>
@@ -24,7 +28,7 @@ bean 설정을 xml로 하는 것의 장점
 
     <bean id="goodDAO" class="com.tob.part1.dao.GoodDAO">
         <!--의존성 주입 객체는 서버 환경에 따라 갈아 교체 가능-->
-<!--        <property name="connectionMaker" ref="nConnectionMaker"/>-->
+        <!--        <property name="connectionMaker" ref="nConnectionMaker"/>-->
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
@@ -57,7 +61,8 @@ bean 설정을 xml로 하는 것의 장점
 
     <bean id="userService" class="com.tob.part5.service.UserService">
         <property name="userDao" ref="jdbcTemplateDAO5"/>
-        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <!--<property name="dataSource" ref="dataSource"/>-->
     </bean>
 
 

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -38,6 +39,10 @@ public class UserServiceTest {
 
     @Autowired
     private DataSource dataSource;
+
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
 
     private JDBCTemplateDAO userDao;
@@ -170,8 +175,12 @@ public class UserServiceTest {
     @Test
     public void upgradeAllOrNothing() throws SQLException {
         UserService testUserService = new UserService.TestUserService(userList.get(3).getName());
+        /**
+         * bean으로 가져온거면 DI가 되어있지만, 아니기 때문에 수동 DI 해야함
+         * */
         testUserService.setUserDao(userDao);
-        testUserService.setDataSource(dataSource);
+        // testUserService.setDataSource(dataSource);
+        testUserService.setTransactionManager(transactionManager);
         userDao.deleteAll();
         for(User user : userList) {
             userDao.add(user);
