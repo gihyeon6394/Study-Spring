@@ -59,9 +59,15 @@ bean 설정을 xml로 하는 것의 장점
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="mailSender" class="com.tob.part5.DumpMailSender">
+
+    </bean>
+
+
     <bean id="userService" class="com.tob.part5.service.UserService">
         <property name="userDao" ref="jdbcTemplateDAO5"/>
         <property name="transactionManager" ref="transactionManager"/>
+        <property name="mailSender" ref="mailSender"/>
         <!--<property name="dataSource" ref="dataSource"/>-->
     </bean>
 

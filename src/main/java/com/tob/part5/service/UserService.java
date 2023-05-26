@@ -3,6 +3,8 @@ package com.tob.part5.service;
 import com.tob.part5.dao.JDBCTemplateDAO;
 import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -21,7 +23,9 @@ public class UserService {
 
     private JDBCTemplateDAO userDao;
 
-    private  PlatformTransactionManager transactionManager;
+    private PlatformTransactionManager transactionManager;
+
+    private MailSender mailSender;
 
     public void setUserDao(JDBCTemplateDAO userDao) {
         this.userDao = userDao;
@@ -29,6 +33,10 @@ public class UserService {
 
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
     }
 
     public static final int MIN_LOGIN_COUNT_FOR_SILVER = 50;
@@ -96,6 +104,28 @@ public class UserService {
         }*/
         user.upgradeLevel();
         userDao.update(user);
+        sendUpgradeEmail(user);
+    }
+
+    /**
+     * 매번 메일이 실제로 발송되는 것이 좋은 테스트인가?
+     * <p>
+     * - 메일 발송 부하
+     * - 테스트 실수 리스크 등
+     * <p>
+     * 따라서 JavaMail API가 정상 요청을 받은걸 확인하는 것에서 테스트를 마친다.
+     */
+
+    private void sendUpgradeEmail(User user) {
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setFrom("foo@email.com");
+        mailMessage.setSubject("Upgrade 안내");
+        mailMessage.setText("사용자님의 등급이 " + user.getLevel().name() + "로 업그레이드 되었습니다.");
+
+        mailSender.send(mailMessage);
+
     }
 
     private boolean canUpgradeLevel(User user) {

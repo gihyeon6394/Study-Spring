@@ -10,6 +10,8 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.mail.MailSender;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,8 +24,7 @@ import java.util.List;
 import static com.tob.part5.service.UserService.MIN_LOGIN_COUNT_FOR_SILVER;
 import static com.tob.part5.service.UserService.MIN_RECOMMEND_COUNT_FOR_GOLD;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration("/applicationContext.xml")
@@ -44,6 +45,9 @@ public class UserServiceTest {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
+
+    @Autowired
+    private MailSender mailSender;
 
     private JDBCTemplateDAO userDao;
 
@@ -173,24 +177,35 @@ public class UserServiceTest {
      */
 
     @Test
+    @DirtiesContext
     public void upgradeAllOrNothing() throws SQLException {
         UserService testUserService = new UserService.TestUserService(userList.get(3).getName());
         /**
          * bean으로 가져온거면 DI가 되어있지만, 아니기 때문에 수동 DI 해야함
          * */
         testUserService.setUserDao(userDao);
+
+        MockMailSender mockMailSender = new MockMailSender();
+        testUserService.setMailSender(mockMailSender);
         // testUserService.setDataSource(dataSource);
         testUserService.setTransactionManager(transactionManager);
+        // testUserService.setMailSender(mailSender);
         userDao.deleteAll();
-        for(User user : userList) {
+        for (User user : userList) {
             userDao.add(user);
         }
-        try{
+        try {
             testUserService.upgradeLevels();
-        }catch (UserService.TestUserService.TestUserServiceException e) {
+        } catch (UserService.TestUserService.TestUserServiceException e) {
 
         }
         checkLevelUpgraded(userList.get(1), false);
+
+        //Mock 객체 사용
+        List<String> request = mockMailSender.getRequests();
+        // assertThat reqeust size larger than 0
+        assertThat(request.size(), greaterThan(0));
+
     }
 
 
