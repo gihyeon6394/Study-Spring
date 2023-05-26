@@ -15,6 +15,8 @@ public class User {
 
     private int cntRecommend; // 추천 횟수
 
+    private String email;
+
 
     public static class Builder {
         private int seq;
@@ -25,6 +27,8 @@ public class User {
         private int cntLogin;
 
         private int cntRecommend;
+
+        private String email;
 
         public Builder() {
         }
@@ -59,6 +63,11 @@ public class User {
             return this;
         }
 
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
 
         public User build() {
             return new User(this);
@@ -89,8 +98,16 @@ public class User {
         return cntRecommend;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setLevel(Level level) {
         this.level = level;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public User(Builder builder) {
@@ -100,6 +117,7 @@ public class User {
         this.level = builder.level;
         this.cntLogin = builder.cntLogin;
         this.cntRecommend = builder.cntRecommend;
+        this.email = builder.email;
     }
 
     @Override
@@ -111,6 +129,7 @@ public class User {
                 ", level=" + level +
                 ", cntLogin=" + cntLogin +
                 ", cntRecommend=" + cntRecommend +
+                ", email='" + email + '\'' +
                 '}';
     }
 
@@ -126,7 +145,8 @@ public class User {
         if (cntRecommend != user.cntRecommend) return false;
         if (!Objects.equals(name, user.name)) return false;
         if (!Objects.equals(nameGroup, user.nameGroup)) return false;
-        return level == user.level;
+        if (level != user.level) return false;
+        return Objects.equals(email, user.email);
     }
 
     @Override
@@ -137,6 +157,7 @@ public class User {
         result = 31 * result + (level != null ? level.hashCode() : 0);
         result = 31 * result + cntLogin;
         result = 31 * result + cntRecommend;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;
     }
 

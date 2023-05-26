@@ -70,10 +70,10 @@ public class UserServiceTest {
         userDao = this.ac.getBean("jdbcTemplateDAO5", JDBCTemplateDAO.class); // getBean() : Dependency lookup
         dataSource = this.ac.getBean("dataSource", DataSource.class);
         // 경계값을 사용하는 테스트
-        userList = Arrays.asList(new User.Builder().name("카리나").nameGroup("에스파").level(Level.GOLD).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER - 10).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD - 10).build()
+        userList = Arrays.asList(new User.Builder().name("카리나").nameGroup("에스파").level(Level.GOLD).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER - 10).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD - 10).email("karina@email.com").build()
                 , new User.Builder().name("지수").nameGroup("블랙핑크").level(Level.SILVER).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build()
                 , new User.Builder().name("아이린").nameGroup("레드벨벳").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER - 1).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD - 20).build()
-                , new User.Builder().name("쯔위").nameGroup("트와이스").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build()
+                , new User.Builder().name("쯔위").nameGroup("트와이스").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).email("zzzz@email.com").build()
                 , new User.Builder().name("수지").nameGroup("미쓰에이").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build()
                 , new User.Builder().name("아이유").nameGroup("솔로").level(Level.BASIC).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD).build());
 

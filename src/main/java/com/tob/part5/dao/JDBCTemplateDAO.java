@@ -26,6 +26,7 @@ public class JDBCTemplateDAO {
                     .level(Level.valueOf(resultSet.getInt("level")))
                     .cntLogin(resultSet.getInt("cnt_login"))
                     .cntRecommend(resultSet.getInt("cnt_recommend"))
+                    .email(resultSet.getString("email"))
                     .build();
         }
     };
@@ -43,8 +44,8 @@ public class JDBCTemplateDAO {
      * */
     public int add(User user) throws DuplicateKeyException {
 
-        return this.jdbcTemplate.update("insert into tb_user (SEQ, NAME, DT_INS, NAME_GROUP, LEVEL, CNT_LOGIN, CNT_RECOMMEND)" +
-                "values (?, ?, now(), ?, ?, ?, ?) ", user.getSeq(), user.getName(), user.getNameGroup(), user.getLevel().intValue(), user.getCntLogin(), user.getCntRecommend());
+        return this.jdbcTemplate.update("insert into tb_user (SEQ, NAME, DT_INS, NAME_GROUP, LEVEL, CNT_LOGIN, CNT_RECOMMEND, email)" +
+                "values (?, ?, now(), ?, ?, ?, ?, ?) ", user.getSeq(), user.getName(), user.getNameGroup(), user.getLevel().intValue(), user.getCntLogin(), user.getCntRecommend(), user.getEmail());
     }
 
 
@@ -73,7 +74,7 @@ public class JDBCTemplateDAO {
     }
 
     public void update(User user) {
-        jdbcTemplate.update("update tb_user set name_group = ?, level = ?, cnt_login = ?, cnt_recommend = ?, dt_updt = now() where name = ?;"
-                , user.getNameGroup(), user.getLevel().intValue(), user.getCntLogin(), user.getCntRecommend(), user.getName());
+        jdbcTemplate.update("update tb_user set name_group = ?, level = ?, cnt_login = ?, cnt_recommend = ?, email = ?,  dt_updt = now() where name = ?;"
+                , user.getNameGroup(), user.getLevel().intValue(), user.getCntLogin(), user.getCntRecommend(), user.getEmail(), user.getName());
     }
 }
