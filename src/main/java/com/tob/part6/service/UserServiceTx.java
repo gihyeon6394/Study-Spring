@@ -41,5 +41,15 @@ public class UserServiceTx implements UserService {
 
     }
 
+    @Override
+    public void deleteAll() {
+        userService.deleteAll();
+    }
+
+    @Override
+    public User selectByName(String name) {
+        return userService.selectByName(name);
+    }
+
 
 }

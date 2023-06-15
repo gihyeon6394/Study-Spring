@@ -7,4 +7,8 @@ public interface UserService {
     void add(User user);
 
     void upgradeLevels();
+
+    void deleteAll();
+
+    User selectByName(String name);
 }

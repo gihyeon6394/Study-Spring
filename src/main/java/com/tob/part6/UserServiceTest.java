@@ -1,11 +1,13 @@
 package com.tob.part6;
 
 import com.tob.part5.MockMailSender;
-import com.tob.part5.dao.JDBCTemplateDAO;
+import com.tob.part6.dao.JDBCTemplateDAO;
+import com.tob.part6.dao.UserDao;
 import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
 import com.tob.part6.service.TestUserService;
 import com.tob.part6.service.UserService;
+import com.tob.part6.service.UserServiceImpl;
 import com.tob.part6.service.UserServiceTx;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +42,9 @@ public class UserServiceTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserServiceImpl userServiceImpl;
 
 
     @Autowired
@@ -74,7 +80,7 @@ public class UserServiceTest {
 
     @Before
     public void setUp() {
-        userDao = this.ac.getBean("jdbcTemplateDAO5", JDBCTemplateDAO.class); // getBean() : Dependency lookup
+        userDao = this.ac.getBean("userDao", JDBCTemplateDAO.class); // getBean() : Dependency lookup
         dataSource = this.ac.getBean("dataSource", DataSource.class);
         // 경계값을 사용하는 테스트
         userList = Arrays.asList(new User.Builder().name("카리나").nameGroup("에스파").level(Level.GOLD).cntLogin(MIN_LOGIN_COUNT_FOR_SILVER - 10).cntRecommend(MIN_RECOMMEND_COUNT_FOR_GOLD - 10).email("karina@email.com").build()
@@ -87,13 +93,8 @@ public class UserServiceTest {
         user = new User.Builder().name("테스트").nameGroup("테스트").level(Level.BASIC).cntLogin(1).cntRecommend(1).build();
     }
 
-    private void checkLevel(User user, Level levelExpected) {
-        User userUpdate = userDao.selectByName(user.getName());
-        assertThat(userUpdate.getLevel(), is(levelExpected));
-    }
-
     private void checkLevelUpgraded(User user, boolean upgraded) {
-        User userUpdate = userDao.selectByName(user.getName());
+        User userUpdate = userService.selectByName(user.getName());
         if (upgraded) {
             assertThat(userUpdate.getLevel(), is(user.getLevel().getNextLevel()));
         } else {
@@ -122,19 +123,36 @@ public class UserServiceTest {
 
     @Test
     public void upgradeLevels() throws SQLException {
-        userDao.deleteAll();
-        for (User user : userList) {
-            userDao.add(user);
-        }
-        userService.upgradeLevels();
 
-        checkLevelUpgraded(userList.get(0), false);
-        checkLevelUpgraded(userList.get(1), true);
-        checkLevelUpgraded(userList.get(2), false);
-        checkLevelUpgraded(userList.get(3), true);
-        checkLevelUpgraded(userList.get(4), true);
-        checkLevelUpgraded(userList.get(5), true);
 
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+
+        // Mock, DI
+        MockUserDao mockUserDao = new MockUserDao(this.userList);
+        userServiceImpl.setUserDao(mockUserDao);
+
+        // Mock : 메일발송 여부
+        MockMailSender mockMailSender = new MockMailSender();
+        userServiceImpl.setMailSender(mockMailSender);
+
+        userServiceImpl.upgradeLevels();
+
+        List<User> updated = mockUserDao.getUpdated();
+        assertThat(updated.size(), is(4));
+        checkUserAndLevel(updated.get(0), "지수", Level.GOLD);
+        checkUserAndLevel(updated.get(1), "쯔위", Level.SILVER);
+        checkUserAndLevel(updated.get(2), "수지", Level.SILVER);
+        checkUserAndLevel(updated.get(3), "아이유", Level.SILVER);
+
+        List<String> request = mockMailSender.getRequests();
+
+        assertThat(request.size(), greaterThan(0));
+
+    }
+
+    private void checkUserAndLevel(User user, String expectedID, Level expectedLevel) {
+        assertThat(user.getName(), is(expectedID));
+        assertThat(user.getLevel(), is(expectedLevel));
     }
 
     @Test
@@ -153,9 +171,9 @@ public class UserServiceTest {
         UserServiceTx userServiceTx = new UserServiceTx();
         userServiceTx.setTransactionManager(transactionManager);
         userServiceTx.setUserService(testUserService);
-        userDao.deleteAll();
+        userService.deleteAll();
         for (User user : userList) {
-            userDao.add(user);
+            userService.add(user);
         }
         try {
             // testUserService.upgradeLevels();
@@ -171,5 +189,64 @@ public class UserServiceTest {
 
     }
 
+    public static class MockUserDao implements UserDao {
 
+        private List<User> users;
+        private List<User> updated = new ArrayList<>();
+
+        public MockUserDao(List<User> users) {
+            this.users = users;
+        }
+
+        public List<User> getUpdated() {
+            return updated;
+        }
+
+        public List<User> getUsers() {
+            return users;
+        }
+
+        public void update(User user) {
+            updated.add(user);
+        }
+
+        // 실수로 호출될 떄를 대비해 런타임 예외 발생
+        @Override
+        public void add(User user) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public User get(int seq) {
+            throw new UnsupportedOperationException();
+
+        }
+
+        @Override
+        public List<User> getAll() {
+            throw new UnsupportedOperationException();
+
+        }
+
+        @Override
+        public User selectByName(String name) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<User> selectAll() {
+            return users;
+        }
+
+        @Override
+        public void deleteAll() {
+            throw new UnsupportedOperationException();
+
+        }
+
+        @Override
+        public int getCount() {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

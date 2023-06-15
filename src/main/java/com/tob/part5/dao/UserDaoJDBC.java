@@ -1,6 +1,6 @@
 package com.tob.part5.dao;
 
-import com.tob.part3.vo.User;
+import com.tob.part5.vo.User;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 

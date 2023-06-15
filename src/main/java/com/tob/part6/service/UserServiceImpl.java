@@ -1,8 +1,8 @@
 package com.tob.part6.service;
 
-import com.tob.part5.dao.JDBCTemplateDAO;
 import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
+import com.tob.part6.dao.UserDao;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -12,13 +12,13 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
-    private JDBCTemplateDAO userDao;
+    private UserDao userDao;
 
     private PlatformTransactionManager transactionManager;
-
     private MailSender mailSender;
 
-    public void setUserDao(JDBCTemplateDAO userDao) {
+
+    public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 
@@ -49,6 +49,16 @@ public class UserServiceImpl implements UserService {
                 upgradeLevel(user);
             }
         }
+    }
+
+    @Override
+    public void deleteAll() {
+        userDao.deleteAll();
+    }
+
+    @Override
+    public User selectByName(String name) {
+        return userDao.selectByName(name);
     }
 
 
