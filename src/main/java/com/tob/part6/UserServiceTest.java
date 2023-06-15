@@ -2,9 +2,11 @@ package com.tob.part6;
 
 import com.tob.part5.MockMailSender;
 import com.tob.part5.dao.JDBCTemplateDAO;
-import com.tob.part5.service.UserService;
 import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
+import com.tob.part6.service.TestUserService;
+import com.tob.part6.service.UserService;
+import com.tob.part6.service.UserServiceTx;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -100,9 +102,45 @@ public class UserServiceTest {
     }
 
     @Test
+    public void add() {
+        userDao.deleteAll();
+
+        User userWithLevel = userList.get(4); // BASIC
+        User userWithoutLevel = userList.get(0); // 레벨이 비어있는 사용자
+
+        userWithoutLevel.setLevel(null);
+
+        userService.add(userWithLevel);
+        userService.add(userWithoutLevel);
+
+        User userWithLevelRead = userDao.selectByName(userWithLevel.getName());
+        User userWithoutLevelRead = userDao.selectByName(userWithoutLevel.getName());
+
+        assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
+        assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
+    }
+
+    @Test
+    public void upgradeLevels() throws SQLException {
+        userDao.deleteAll();
+        for (User user : userList) {
+            userDao.add(user);
+        }
+        userService.upgradeLevels();
+
+        checkLevelUpgraded(userList.get(0), false);
+        checkLevelUpgraded(userList.get(1), true);
+        checkLevelUpgraded(userList.get(2), false);
+        checkLevelUpgraded(userList.get(3), true);
+        checkLevelUpgraded(userList.get(4), true);
+        checkLevelUpgraded(userList.get(5), true);
+
+    }
+
+    @Test
     @DirtiesContext
     public void upgradeAllOrNothing() throws SQLException {
-        UserService testUserService = new UserService.TestUserService(userList.get(3).getName());
+        TestUserService testUserService = new TestUserService(userList.get(3).getName());
 
         testUserService.setUserDao(userDao);
 
@@ -111,13 +149,18 @@ public class UserServiceTest {
 
         testUserService.setTransactionManager(transactionManager);
 
+
+        UserServiceTx userServiceTx = new UserServiceTx();
+        userServiceTx.setTransactionManager(transactionManager);
+        userServiceTx.setUserService(testUserService);
         userDao.deleteAll();
         for (User user : userList) {
             userDao.add(user);
         }
         try {
-            testUserService.upgradeLevels();
-        } catch (UserService.TestUserService.TestUserServiceException e) {
+            // testUserService.upgradeLevels();
+            userServiceTx.upgradeLevels();
+        } catch (TestUserService.TestUserServiceException e) {
 
         }
         checkLevelUpgraded(userList.get(1), false);
