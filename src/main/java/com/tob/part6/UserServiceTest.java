@@ -1,10 +1,10 @@
 package com.tob.part6;
 
 import com.tob.part5.MockMailSender;
-import com.tob.part6.dao.JDBCTemplateDAO;
-import com.tob.part6.dao.UserDao;
 import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
+import com.tob.part6.dao.JDBCTemplateDAO;
+import com.tob.part6.dao.UserDao;
 import com.tob.part6.service.TestUserService;
 import com.tob.part6.service.UserService;
 import com.tob.part6.service.UserServiceImpl;
@@ -13,9 +13,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -147,6 +151,50 @@ public class UserServiceTest {
         List<String> request = mockMailSender.getRequests();
 
         assertThat(request.size(), greaterThan(0));
+
+    }
+
+    @Test
+    public void upgradeLevelsMock() throws SQLException {
+
+
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+
+        // Mock, DI
+        UserDao userDaoMock = Mockito.mock(UserDao.class);
+        Mockito.when(userDaoMock.selectAll()).thenReturn(this.userList);
+
+        userServiceImpl.setUserDao(userDaoMock);
+
+        MailSender mailSenderMock =  Mockito.mock(MailSender.class);
+        userServiceImpl.setMailSender(mailSenderMock);
+
+        userServiceImpl.upgradeLevels();
+
+        Mockito.verify(userDaoMock,  Mockito.times(4)).update(ArgumentMatchers.any(User.class));
+
+        Mockito.verify(userDaoMock).update(userList.get(1));
+        assertThat(userList.get(1).getLevel(), is(Level.GOLD));
+
+        Mockito.verify(userDaoMock).update(userList.get(3));
+        assertThat(userList.get(3).getLevel(), is(Level.SILVER));
+
+
+        Mockito.verify(userDaoMock).update(userList.get(4));
+        assertThat(userList.get(4).getLevel(), is(Level.SILVER));
+
+        Mockito.verify(userDaoMock).update(userList.get(5));
+        assertThat(userList.get(5).getLevel(), is(Level.SILVER));
+
+
+        ArgumentCaptor<SimpleMailMessage> mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        Mockito.verify(mailSenderMock, Mockito.times(4)).send(mailMessageArg.capture());
+
+        List<SimpleMailMessage> mailMessages = mailMessageArg.getAllValues();
+        assertThat(mailMessages.get(0).getTo()[0], is(userList.get(1).getEmail()));
+        assertThat(mailMessages.get(1).getTo()[0], is(userList.get(3).getEmail()));
+
+
 
     }
 
