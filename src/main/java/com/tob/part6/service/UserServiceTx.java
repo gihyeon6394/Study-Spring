@@ -7,6 +7,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
  * 트랜잭션 서비스 제공
+ * UserServiceTx : porxy
+ * UserService : target
  */
 public class UserServiceTx implements UserService {
 
