@@ -13,7 +13,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class UserServiceTx implements UserService {
 
 
-    private UserService userService;
+    private UserService userService; // target object
     private PlatformTransactionManager transactionManager;
 
     // Userservice 비즈니스 로직을 담당할 UserService 구현 클래스 주입 받음
