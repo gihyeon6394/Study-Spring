@@ -6,9 +6,9 @@ import com.tob.part5.vo.User;
 import com.tob.part6.dao.JDBCTemplateDAO;
 import com.tob.part6.dao.UserDao;
 import com.tob.part6.service.TestUserService;
+import com.tob.part6.service.TransactionHandler;
 import com.tob.part6.service.UserService;
 import com.tob.part6.service.UserServiceImpl;
-import com.tob.part6.service.UserServiceTx;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -26,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -166,12 +167,12 @@ public class UserServiceTest {
 
         userServiceImpl.setUserDao(userDaoMock);
 
-        MailSender mailSenderMock =  Mockito.mock(MailSender.class);
+        MailSender mailSenderMock = Mockito.mock(MailSender.class);
         userServiceImpl.setMailSender(mailSenderMock);
 
         userServiceImpl.upgradeLevels();
 
-        Mockito.verify(userDaoMock,  Mockito.times(4)).update(ArgumentMatchers.any(User.class));
+        Mockito.verify(userDaoMock, Mockito.times(4)).update(ArgumentMatchers.any(User.class));
 
         Mockito.verify(userDaoMock).update(userList.get(1));
         assertThat(userList.get(1).getLevel(), is(Level.GOLD));
@@ -195,7 +196,6 @@ public class UserServiceTest {
         assertThat(mailMessages.get(1).getTo()[0], is(userList.get(3).getEmail()));
 
 
-
     }
 
     private void checkUserAndLevel(User user, String expectedID, Level expectedLevel) {
@@ -216,16 +216,23 @@ public class UserServiceTest {
         testUserService.setTransactionManager(transactionManager);
 
 
-        UserServiceTx userServiceTx = new UserServiceTx();
-        userServiceTx.setTransactionManager(transactionManager);
-        userServiceTx.setUserService(testUserService);
-        userService.deleteAll();
+//        UserServiceTx userServiceTx = new UserServiceTx();
+//        userServiceTx.setTransactionManager(transactionManager);
+//        userServiceTx.setUserService(testUserService);
+        TransactionHandler transactionHandler = new TransactionHandler();
+        transactionHandler.setTarget(testUserService);
+        transactionHandler.setTransactionManager(transactionManager);
+        transactionHandler.setPattern("upgradeLevels");
+
+        UserService txUserService = (UserService) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{UserService.class}, transactionHandler);
+
+        txUserService.deleteAll();
         for (User user : userList) {
             userService.add(user);
         }
         try {
             // testUserService.upgradeLevels();
-            userServiceTx.upgradeLevels();
+            // userServiceTx.upgradeLevels();
         } catch (TestUserService.TestUserServiceException e) {
 
         }
@@ -297,4 +304,6 @@ public class UserServiceTest {
             throw new UnsupportedOperationException();
         }
     }
+
+
 }
