@@ -77,5 +77,8 @@ bean 설정을 xml로 하는 것의 장점
         <property name="mailSender" ref="mailSender"/>
     </bean>
 
+    <bean id="message" class="com.tob.part6.factorybean.MessageFactoryBean">
+        <property name="text" value="This is from FactoryBean"/>
+    </bean>
 
 </beans>
