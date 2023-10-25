@@ -67,9 +67,11 @@ bean 설정을 xml로 하는 것의 장점
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="userService" class="com.tob.part6.service.UserServiceTx">
-        <property name="userService" ref="userServiceImpl"/>
+    <bean id="userService" class="com.tob.part6.factorybean.TxProxyFactoryBean">
+        <property name="target" ref="userServiceImpl"/>
         <property name="transactionManager" ref="transactionManager"/>
+        <property name="pattern" value="upgradeLevels"/>
+        <property name="serviceInterface" value="com.tob.part6.service.UserService"/>
     </bean>
 
     <bean id="userServiceImpl" class="com.tob.part6.service.UserServiceImpl">

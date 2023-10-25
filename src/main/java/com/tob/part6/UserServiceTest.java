@@ -5,8 +5,8 @@ import com.tob.part5.vo.Level;
 import com.tob.part5.vo.User;
 import com.tob.part6.dao.JDBCTemplateDAO;
 import com.tob.part6.dao.UserDao;
+import com.tob.part6.factorybean.TxProxyFactoryBean;
 import com.tob.part6.service.TestUserService;
-import com.tob.part6.service.TransactionHandler;
 import com.tob.part6.service.UserService;
 import com.tob.part6.service.UserServiceImpl;
 import org.junit.Before;
@@ -26,7 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -205,7 +204,7 @@ public class UserServiceTest {
 
     @Test
     @DirtiesContext
-    public void upgradeAllOrNothing() throws SQLException {
+    public void upgradeAllOrNothing() throws Exception {
         TestUserService testUserService = new TestUserService(userList.get(3).getName());
 
         testUserService.setUserDao(userDao);
@@ -216,20 +215,21 @@ public class UserServiceTest {
         testUserService.setTransactionManager(transactionManager);
 
 
-//        UserServiceTx userServiceTx = new UserServiceTx();
-//        userServiceTx.setTransactionManager(transactionManager);
-//        userServiceTx.setUserService(testUserService);
-        TransactionHandler transactionHandler = new TransactionHandler();
-        transactionHandler.setTarget(testUserService);
-        transactionHandler.setTransactionManager(transactionManager);
-        transactionHandler.setPattern("upgradeLevels");
+//        TransactionHandler transactionHandler = new TransactionHandler();
+//        transactionHandler.setTarget(testUserService);
+//        transactionHandler.setTransactionManager(transactionManager);
+//        transactionHandler.setPattern("upgradeLevels");
+//        UserService txUserService = (UserService) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{UserService.class}, transactionHandler);
 
-        UserService txUserService = (UserService) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{UserService.class}, transactionHandler);
+        TxProxyFactoryBean txProxyFactoryBean = ac.getBean("&userService", TxProxyFactoryBean.class);
+        txProxyFactoryBean.setTarget(testUserService);
+
+
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
         txUserService.deleteAll();
-        for (User user : userList) {
-            userService.add(user);
-        }
+        userList.stream().forEach(user -> userService.add(user));
+
         try {
             // testUserService.upgradeLevels();
             // userServiceTx.upgradeLevels();
